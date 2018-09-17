@@ -11,10 +11,11 @@ async function bootstrap() {
   .setTitle('PRAXIS API')
   .setDescription('API Documentation')
   .setVersion('1.0.0')
-  .setSchemes(AppModule.isDev ? 'http' : 'https')
+  .setSchemes('https')
   .addBearerAuth()
   .build();
 
+  // .setSchemes(AppModule.isDev ? 'http' : 'https')
   const document = SwaggerModule.createDocument(app, options);
   SwaggerModule.setup('/api/v1/docs', app, document);
   
@@ -23,7 +24,7 @@ async function bootstrap() {
     module.hot.dispose(() => app.close());
   }
 
-  await app.listen(AppModule.port);
+  await app.listen(process.env.PORT || 3000);
 }
 bootstrap();
 
