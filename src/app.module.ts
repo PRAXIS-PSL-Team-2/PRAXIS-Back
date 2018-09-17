@@ -4,10 +4,10 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { SharedModule } from './shared/shared.module';
 import { Configuration } from './shared/configuration/configuration.enum';
-import { ConfigurationService } from 'shared/configuration/configuration.service';
+import { ConfigurationService } from './shared/configuration/configuration.service';
 
 @Module({
-  imports: [SharedModule,MongooseModule.forRoot(ConfigurationService.connectionString, { useNewUrlParser: true })],
+  imports: [SharedModule, MongooseModule.forRoot(ConfigurationService.connectionString, { useNewUrlParser: true })],
   controllers: [AppController],
   providers: [AppService],
 })
