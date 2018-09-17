@@ -27,32 +27,3 @@ async function bootstrap() {
 }
 bootstrap();
 
-
-  //http://localhost:3000 : https://whateverwhatever.com
-  // const hostDomain = AppModule.isDev ? `${AppModule.host}:${AppModule.port}`: AppModule.host;
-
-  // const swaggerOptions = new DocumentBuilder()
-  //   .setTitle('PRAXIS API')
-  //   .setDescription('API Documentation')
-  //   .setVersion('1.0.0')
-  //   .setHost(hostDomain.split('//')[1])
-  //   .setSchemes(AppModule.isDev ? 'http' : 'https')
-  //   .setBasePath('/api/v1')
-  //   .addBearerAuth('Authorization', 'header')
-  //   .build();
-
-  // const swaggerDoc = SwaggerModule.createDocument(app, swaggerOptions);
-
-  // app.use('/api/v1/docs/swagger.json', (req, res) => {
-  //   res.send(swaggerDoc);
-  // });
-
-  // SwaggerModule.setup('/api/v1/docs', app, null, {
-  //   swaggerUrl: `${hostDomain}/api/v1/docs/swagger.json`,
-  //   explorer: true,
-  //   swaggerOptions: {
-  //     docExpansion: 'list',
-  //     filter: true,
-  //     showRequestDuration: true,
-  //   },
-  // });
