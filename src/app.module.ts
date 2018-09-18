@@ -5,9 +5,10 @@ import { AppService } from './app.service';
 import { SharedModule } from './shared/shared.module';
 import { Configuration } from './shared/configuration/configuration.enum';
 import { ConfigurationService } from './shared/configuration/configuration.service';
+import { UsersModule } from './users/users.module';
 
 @Module({
-  imports: [ MongooseModule.forRoot('mongodb://admin:admin123@ds159772.mlab.com:59772/praxisdb', { useNewUrlParser: true }), SharedModule],
+  imports: [ MongooseModule.forRoot('mongodb://admin:admin123@ds159772.mlab.com:59772/praxisdb', { useNewUrlParser: true }), SharedModule, UsersModule],
   controllers: [AppController],
   providers: [AppService],
 })
