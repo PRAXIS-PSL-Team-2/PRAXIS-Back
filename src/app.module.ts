@@ -6,9 +6,10 @@ import { SharedModule } from './shared/shared.module';
 import { Configuration } from './shared/configuration/configuration.enum';
 import { ConfigurationService } from './shared/configuration/configuration.service';
 import { UsersModule } from './users/users.module';
+import { StudentsModule } from './students/students.module';
 
 @Module({
-  imports: [ MongooseModule.forRoot('mongodb://admin:admin123@ds159772.mlab.com:59772/praxisdb', { useNewUrlParser: true }), SharedModule, UsersModule],
+  imports: [ MongooseModule.forRoot('mongodb://admin:admin123@ds159772.mlab.com:59772/praxisdb', { useNewUrlParser: true }), SharedModule, UsersModule, StudentsModule],
   controllers: [AppController],
   providers: [AppService],
 })
@@ -16,7 +17,7 @@ export class AppModule {
   static host: string;
   static port: number | string;
   static isDev: boolean;
-
+  
   constructor(private readonly _configurationService: ConfigurationService){
     AppModule.port = AppModule.normalizePort(_configurationService.get(Configuration.PORT));
     AppModule.host = _configurationService.get(Configuration.HOST);
