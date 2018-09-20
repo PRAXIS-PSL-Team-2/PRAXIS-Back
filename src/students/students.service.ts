@@ -15,7 +15,15 @@ export class StudentsService {
         return await this.studentModel.find().exec();
     }
 
-    async create( createStudentDto: CreateStudentDto): Promise<any> {
+    async create( createStudentDto: CreateStudentDto): Promise<Student> {
+        const newStudent = this.studentMapper(createStudentDto, "Praxis Version ID");
+
+        return await newStudent.save();
+    }
+
+    
+    studentMapper( createStudentDto: CreateStudentDto, praxisVersion: String  ): Student {
+
         const newStudent = new this.studentModel(createStudentDto);
 
         const newStudentData = new this.studentDataModel();
@@ -34,6 +42,7 @@ export class StudentsService {
         newStudent.studentData.video = createStudentDto.video;
         newStudent.studentData.praxisVersion = newStudent._id;
 
-        return await newStudent.save();
+        return newStudent;
     }
 }
+
