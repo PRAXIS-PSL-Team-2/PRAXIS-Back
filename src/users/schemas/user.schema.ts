@@ -1,5 +1,6 @@
 import { Schema } from 'mongoose';
 import { StudentSchema } from '../../students/schemas/student.schema';
+import { ProfessorSchema } from '../../professors/schemas/professor.schema';
 
 export const UserSchema = new Schema(
     {
@@ -23,7 +24,7 @@ export const UserSchema = new Schema(
             default: null
         },
         professorData: { 
-            type: StudentSchema,
+            type: ProfessorSchema,
             required: () => { return this.role === 'professor'; },
             default: null
         },
