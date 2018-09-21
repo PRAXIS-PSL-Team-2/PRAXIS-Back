@@ -1,6 +1,6 @@
 import { ApiModelProperty } from "@nestjs/swagger";
 
-export class CreateStudentDto {
+export class CreatePraxisDto {
 
     @ApiModelProperty()
     readonly versionName: string;
@@ -9,16 +9,16 @@ export class CreateStudentDto {
     readonly university: string;
 
     @ApiModelProperty()
-    readonly openInscriptionDate: string;
+    openInscriptionDate: string;
 
     @ApiModelProperty()
-    readonly closeInscriptionDate: string;
+    closeInscriptionDate: string;
 
     @ApiModelProperty()
-    readonly initialDate: string;
+    initialDate: string;
 
     @ApiModelProperty()
-    readonly endDate: string;
+    endDate: string;
 
     @ApiModelProperty()
     readonly virtualSessionLink: string;

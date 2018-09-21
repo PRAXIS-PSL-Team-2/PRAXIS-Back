@@ -1,7 +1,7 @@
 import { Schema } from 'mongoose';
 import { ClassSchema } from './class.schema';
 
-export const StudentSchema = new Schema(
+export const PraxisSchema = new Schema(
     {
         versionName: {
             required: true,
