@@ -23,6 +23,10 @@ async function bootstrap() {
     module.hot.dispose(() => app.close());
   }
 
+  app.enableCors({
+    origin: 'http://localhost:4200'
+  });
+
   await app.listen(AppModule.port);
 }
 bootstrap();
