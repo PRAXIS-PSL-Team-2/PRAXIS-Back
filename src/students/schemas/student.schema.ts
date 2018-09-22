@@ -29,7 +29,7 @@ export const StudentSchema = new Schema(
         goal: {
             type: String,
             required: true,
-            enum: ['intership', 'firstJob']
+            enum: ['intership', 'firstjob']
         },
         selfDescription: {
             required: true,
