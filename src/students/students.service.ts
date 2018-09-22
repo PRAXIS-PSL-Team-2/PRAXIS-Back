@@ -21,6 +21,10 @@ export class StudentsService {
         return await newStudent.save();
     }
 
+    async findOne(filter = {}): Promise<Student> {
+        return this.studentModel.findOne(filter).exec();
+    }
+
     
     studentMapper( createStudentDto: CreateStudentDto, praxisVersion: String  ): Student {
 
