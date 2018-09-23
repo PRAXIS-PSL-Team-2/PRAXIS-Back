@@ -1,6 +1,7 @@
 import { Schema } from 'mongoose';
 import { StudentSchema } from '../../students/schemas/student.schema';
 import { ProfessorSchema } from '../../professors/schemas/professor.schema';
+import * as passportLocalMongoose from 'passport-local-mongoose';
 
 export const UserSchema = new Schema(
     {
@@ -33,3 +34,5 @@ export const UserSchema = new Schema(
         timestamps: true
     }
 );
+
+UserSchema.plugin(passportLocalMongoose);
