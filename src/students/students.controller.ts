@@ -1,4 +1,4 @@
-import { Controller, Get, Response, HttpStatus, Post, Body } from '@nestjs/common';
+import { Controller, Get, Response, HttpStatus, Post, Body, HttpException } from '@nestjs/common';
 import { ApiUseTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { StudentsService } from './students.service';
 import { CreateStudentDto } from './dto/create-student.dto';
@@ -16,11 +16,11 @@ export class StudentsController {
     }
 
     // @ApiOperation({ title: 'Create an user', description: "Create an user passing a object of type CreateUserDto. Return the object created" })
-    // @ApiResponse({ status: 201, description: 'The user has been successfully created.' })
+    @ApiResponse({ status: 201, description: 'The user has been successfully created.' })
     // @ApiResponse({ status: 403, description: 'Forbidden.' })
     @Post()
     public async createStudent(@Response() res, @Body() createStudentDto: CreateStudentDto) {
-
+        
         const user = await this.studentsService.create(createStudentDto);
         return res.status(HttpStatus.CREATED).json(user);
     }

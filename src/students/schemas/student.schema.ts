@@ -45,6 +45,9 @@ export const StudentSchema = new Schema(
             enum: ['candidate', 'accepted'],
             default: 'candidate'
         },
+        team: {
+            type: Number
+        },
         classes: [ 
             {
                 class_id: {
@@ -53,12 +56,12 @@ export const StudentSchema = new Schema(
                 },
                 attendance: {
                     type: String,
-                    enum: ['','YES','NO'],
+                    enum: ['','yes','no'],
                     default: ''
                 },
                 grade: {
                     type: Number,
-                    default: -1
+                    default: null
                 }
             },
         ]

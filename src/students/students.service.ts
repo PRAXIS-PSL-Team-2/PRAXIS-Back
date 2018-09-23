@@ -1,28 +1,41 @@
-import { Injectable, Inject } from '@nestjs/common';
+import { Injectable, Inject, forwardRef, HttpException, HttpStatus } from '@nestjs/common';
 import { Student, StudentData } from './interfaces/student.interface';
 import { Model, Types, Schema } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { CreateStudentDto } from './dto/create-student.dto';
+import { PraxisService } from '../praxis/praxis.service';
+
+
 
 @Injectable()
 export class StudentsService {
     constructor(
         @InjectModel('User') private readonly studentModel: Model<Student>,
-        @InjectModel('User') private readonly studentDataModel: Model<StudentData>
+        @InjectModel('User') private readonly studentDataModel: Model<StudentData>,
+        private readonly praxisService: PraxisService
     ) {}
 
     async findAll(): Promise<Student[]> {
-        return await this.studentModel.find().exec();
+        try {
+            return await this.studentModel.find().exec();
+        } catch (e) {
+            throw new HttpException(e, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     async create( createStudentDto: CreateStudentDto): Promise<Student> {
-        const newStudent = this.studentMapper(createStudentDto, "Praxis Version ID");
 
-        return await newStudent.save();
+        try {
+            const newStudent = await this.studentMapper(createStudentDto);
+            return await newStudent.save();
+        } catch (e) {
+            throw new HttpException(e, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
     }
 
     
-    studentMapper( createStudentDto: CreateStudentDto, praxisVersion: String  ): Student {
+    async studentMapper( createStudentDto: CreateStudentDto): Promise<Student> {
 
         const newStudent = new this.studentModel(createStudentDto);
 
@@ -40,8 +53,11 @@ export class StudentsService {
         newStudent.studentData.goal = createStudentDto.goal;
         newStudent.studentData.selfDescription = createStudentDto.selfDescription;
         newStudent.studentData.video = createStudentDto.video;
-        newStudent.studentData.praxisVersion = newStudent._id;
 
+        const praxisVersion = await this.praxisService.getPraxisVersion(createStudentDto.university);
+
+        newStudent.studentData.praxisVersion = praxisVersion;
+        
         return newStudent;
     }
 }
