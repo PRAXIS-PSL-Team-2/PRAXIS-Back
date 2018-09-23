@@ -39,4 +39,10 @@ export class PraxisController {
         const praxis = await this.praxisService.getPraxisVersion(university);
         return res.status(HttpStatus.OK).json(praxis);
     }
+
+    @Get('/:praxisId/accept/:studentId')
+    public async acceptStudentInPraxis(@Response() res, @Param('studentId') studentId: String, @Param('praxisId') praxisId: String) {
+        const praxis = await this.praxisService.acceptStudentInPraxis(studentId, praxisId);
+        return res.status(HttpStatus.OK).json(praxis);
+    }
 }

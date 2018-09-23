@@ -28,19 +28,15 @@ export const PraxisSchema = new Schema(
             required: true,
         },
         virtualSessionLink: {
-            required: true,
             type: String
         },
         studentsCapacity: {
-            required: true,
             type: Number
         },
         classDays: {
-            required: true,
             type: String
         },
         classTimeRange: {
-            required: true,
             type: String
         },
         candidates: [{

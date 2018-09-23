@@ -21,6 +21,19 @@ export const ClassSchema = new Schema(
         professor: {
             type: Schema.Types.ObjectId,
             ref: "User" 
-        }
+        },
+        resources: [
+            {
+                type: {
+                    type: String,
+                    required: true,
+                    enum: ['file', 'link']
+                },
+                resource: {
+                    type: String,
+                    required: true
+                }
+            }
+        ]
     }
 );

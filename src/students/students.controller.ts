@@ -17,9 +17,16 @@ export class StudentsController {
 
     // @ApiOperation({ title: 'Create an user', description: "Create an user passing a object of type CreateUserDto. Return the object created" })
     @ApiResponse({ status: 201, description: 'The user has been successfully created.' })
-    // @ApiResponse({ status: 403, description: 'Forbidden.' })
     @Post()
     public async createStudent(@Response() res, @Body() createStudentDto: CreateStudentDto) {
+
+        if(!createStudentDto.email || !createStudentDto.goal || !createStudentDto.lastName || !createStudentDto.name || !createStudentDto.password
+            || !createStudentDto.phone || !createStudentDto.selfDescription || !createStudentDto.university || !createStudentDto.username || !createStudentDto.video ) {
+                throw new HttpException({
+                    status: HttpStatus.CONFLICT,
+                    error: 'Missing fields to complete registration.',
+                }, HttpStatus.CONFLICT);
+            }
         
         const user = await this.studentsService.create(createStudentDto);
         return res.status(HttpStatus.CREATED).json(user);

@@ -29,6 +29,21 @@ export class PraxisService {
         }
     }
 
+    async update(ID: String, newValue: any): Promise<Praxis> {
+        const user = await this.praxisModel.findById(ID).exec();
+
+        if (!user._id) {
+            throw new HttpException({
+                status: HttpStatus.NOT_FOUND,
+                error: 'User not found.',
+            }, HttpStatus.NOT_FOUND);
+        }
+
+        await this.praxisModel.findByIdAndUpdate(ID, newValue).exec();
+
+        return await this.praxisModel.findById(ID).exec();
+    }
+
     async getAvailablePraxis(): Promise<Praxis[]>{
 
         return await this.praxisModel.find({
@@ -68,6 +83,32 @@ export class PraxisService {
                 error: 'That university does not have calls available for praxis at this time.',
             }, HttpStatus.NOT_FOUND);
         }
+    }
+
+    async setStudentCandidateToPraxis(studentId: String, praxisId: String) {
+
+        const body = {$addToSet: { candidates: studentId }};
+
+        await this.update(praxisId, body);
+        
+    }
+
+    async acceptStudentInPraxis(studentId: String, praxisId: String) {
+        const result = await this.praxisModel.find({
+            _id: praxisId,
+            candidates: {$in: studentId}
+        });
+
+        if (result.length == 0) {
+            throw new HttpException({
+                status: HttpStatus.CONFLICT,
+                error: 'The student is not a candidate for that version of praxis.',
+            }, HttpStatus.CONFLICT);
+        }
+
+        const body = {$addToSet: { students: studentId }};
+
+        return this.update(praxisId, body);
     }
 
 }

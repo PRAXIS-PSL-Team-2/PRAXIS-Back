@@ -1,4 +1,4 @@
-import { Injectable, Inject, forwardRef, HttpException, HttpStatus } from '@nestjs/common';
+import { Injectable, Inject, forwardRef, HttpException, HttpStatus, Next } from '@nestjs/common';
 import { Student, StudentData } from './interfaces/student.interface';
 import { Model, Types, Schema } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
@@ -27,7 +27,9 @@ export class StudentsService {
 
         try {
             const newStudent = await this.studentMapper(createStudentDto);
-            return await newStudent.save();
+            const student = await newStudent.save();
+            await this.praxisService.setStudentCandidateToPraxis(student._id, student.studentData.praxisVersion);
+            return student
         } catch (e) {
             throw new HttpException(e, HttpStatus.INTERNAL_SERVER_ERROR);
         }
