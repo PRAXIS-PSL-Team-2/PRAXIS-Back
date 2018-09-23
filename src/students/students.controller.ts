@@ -2,6 +2,7 @@ import { Controller, Get, Response, HttpStatus, Post, Body, HttpException } from
 import { ApiUseTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { StudentsService } from './students.service';
 import { CreateStudentDto } from './dto/create-student.dto';
+import { messages } from '@nestjs/core/constants';
 
 @ApiUseTags('students')
 @Controller('api/v1/students')
@@ -22,10 +23,10 @@ export class StudentsController {
 
         if(!createStudentDto.email || !createStudentDto.goal || !createStudentDto.lastName || !createStudentDto.name || !createStudentDto.password
             || !createStudentDto.phone || !createStudentDto.selfDescription || !createStudentDto.university || !createStudentDto.username || !createStudentDto.video ) {
-                throw new HttpException({
-                    status: HttpStatus.CONFLICT,
-                    error: 'Missing fields to complete registration.',
-                }, HttpStatus.CONFLICT);
+                return res.json({
+                    status:false,
+                    message:"complete your fields"
+                })
             }
         
         const user = await this.studentsService.create(createStudentDto);
