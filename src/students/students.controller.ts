@@ -30,7 +30,17 @@ export class StudentsController {
         } else {
             return res.json(users);
         }
-        
+    }
+
+    @Get('/email/disponibility/:email')
+    public async checkIfEmailExist(@Response() res, @Param('email') email: String) {
+        const users = await this.studentsService.checkIfEmailExist(email);
+
+        if (users instanceof Error){
+            return res.json({ status: false, code: HttpStatus.CONFLICT,  message: users.message});
+        } else {
+            return res.json(users);
+        }
     }
 
     // @ApiOperation({ title: 'Create an user', description: "Create an user passing a object of type CreateUserDto. Return the object created" })
