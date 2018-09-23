@@ -1,4 +1,4 @@
-import { Controller, Get, Response, HttpStatus, Post, Body, HttpException } from '@nestjs/common';
+import { Controller, Get, Response, HttpStatus, Post, Body, HttpException, Param } from '@nestjs/common';
 import { ApiUseTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { StudentsService } from './students.service';
 import { CreateStudentDto } from './dto/create-student.dto';
@@ -17,6 +17,18 @@ export class StudentsController {
             return res.json({ status: false, code: HttpStatus.CONFLICT,  message: users.message});
         } else {
             return res.json({ status: true, code: HttpStatus.CREATED,  message: 'Students.', object: users});
+        }
+        
+    }
+
+    @Get('/username/disponibility/:username')
+    public async checkIfUsernameExist(@Response() res, @Param('username') username: String) {
+        const users = await this.studentsService.checkIfUsernameExist(username);
+
+        if (users instanceof Error){
+            return res.json({ status: false, code: HttpStatus.CONFLICT,  message: users.message});
+        } else {
+            return res.json(users);
         }
         
     }

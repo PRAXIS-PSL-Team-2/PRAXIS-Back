@@ -12,6 +12,7 @@ export const StudentSchema = new Schema(
         },
         email: {
             required: true,
+            unique: true,
             type: String
         },
         phone: {
