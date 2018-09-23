@@ -55,7 +55,7 @@ export class PraxisService {
 
     }
 
-    async getPraxisVersion(universityy : String): Promise<string> {
+    async getPraxisVersion(university : String): Promise<string> {
         const  availablePraxis  = await this.praxisModel.aggregate([
             { $project: {
                 _id: 0, 
@@ -69,7 +69,7 @@ export class PraxisService {
                 $and: [
                     { openInscriptionDate: { $lt: new Date() } },
                     { closeInscriptionDate: { $gte: new Date() } },
-                    { university:  universityy}
+                    { university:  university}
                 ]
              }   
             }

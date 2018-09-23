@@ -1,6 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { json, urlencoded } from 'express';
 
 declare const module: any;
 
@@ -26,6 +27,9 @@ async function bootstrap() {
   app.enableCors({
     origin: 'http://localhost:4200'
   });
+
+  app.use(json());
+  app.use(urlencoded({ extended: true }));
 
   await app.listen(AppModule.port);
 }
