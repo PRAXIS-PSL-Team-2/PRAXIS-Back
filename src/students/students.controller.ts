@@ -14,9 +14,9 @@ export class StudentsController {
         const users = await this.studentsService.findAll();
 
         if (users instanceof Error){
-            return res.status(HttpStatus.CONFLICT).json({ status: false, code: HttpStatus.CONFLICT,  message: users.message});
+            return res.json({ status: false, code: HttpStatus.CONFLICT,  message: users.message});
         } else {
-            return res.status(HttpStatus.OK).json({ status: true, code: HttpStatus.CREATED,  message: 'Students.', object: users});
+            return res.json({ status: true, code: HttpStatus.CREATED,  message: 'Students.', object: users});
         }
         
     }
@@ -28,15 +28,15 @@ export class StudentsController {
 
         if(!createStudentDto.email || !createStudentDto.goal || !createStudentDto.lastName || !createStudentDto.name || !createStudentDto.password
             || !createStudentDto.phone || !createStudentDto.selfDescription || !createStudentDto.university || !createStudentDto.username || !createStudentDto.video ) {
-                return res.status(HttpStatus.CONFLICT).json({ status: false, code: HttpStatus.CONFLICT, message: 'Missing fields to complete registration.'});
+                return res.json({ status: false, code: HttpStatus.CONFLICT, message: 'Missing fields to complete registration.'});
             }
         
         const user = await this.studentsService.create(createStudentDto);
 
         if (user instanceof Error){
-            return res.status(HttpStatus.CONFLICT).json({ status: false, code: HttpStatus.CONFLICT,  message: user.message});
+            return res.json({ status: false, code: HttpStatus.CONFLICT,  message: user.message});
         } else {
-            return res.status(HttpStatus.CREATED).json({ status: true, code: HttpStatus.CREATED,  message: 'The student has been successfully created.'});
+            return res.json({ status: true, code: HttpStatus.CREATED,  message: 'The student has been successfully created.'});
         }
     }
 }
