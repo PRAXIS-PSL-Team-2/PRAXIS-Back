@@ -29,6 +29,6 @@ export class StudentsController {
             }
         
         const user = await this.studentsService.create(createStudentDto);
-        return res.status(HttpStatus.CREATED).json({ status: 201, description: 'The student has been successfully created.' });
+        return res.status(HttpStatus.CREATED).json({ status: 201, description: 'The student has been successfully created.', object: user });
     }
 }
