@@ -15,15 +15,17 @@ export class StudentsService {
         private readonly praxisService: PraxisService
     ) {}
 
-    async findAll(): Promise<Student[]> {
+    async findAll(): Promise<Student[] | Error> {
         try {
             return await this.studentModel.find().exec();
         } catch (e) {
-            throw new HttpException(e, HttpStatus.INTERNAL_SERVER_ERROR);
+            const error = new Error()
+            error.message = String(e);
+            return error;
         }
     }
 
-    async create( createStudentDto: CreateStudentDto): Promise<Student> {
+    async create( createStudentDto: CreateStudentDto): Promise<Student | Error> {
 
         try {
             const newStudent = await this.studentMapper(createStudentDto);
@@ -31,7 +33,9 @@ export class StudentsService {
             await this.praxisService.setStudentCandidateToPraxis(student._id, student.studentData.praxisVersion);
             return student
         } catch (e) {
-            throw new HttpException(e, HttpStatus.INTERNAL_SERVER_ERROR);
+            const error = new Error()
+            error.message = String(e);
+            return error;
         }
 
     }

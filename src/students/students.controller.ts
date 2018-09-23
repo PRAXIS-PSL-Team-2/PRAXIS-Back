@@ -12,7 +12,13 @@ export class StudentsController {
     @Get()
     public async getStudents(@Response() res) {
         const users = await this.studentsService.findAll();
-        return res.status(HttpStatus.OK).json(users);
+
+        if (users instanceof Error){
+            return res.status(HttpStatus.CONFLICT).json({ status: false, code: HttpStatus.CONFLICT,  message: users.message});
+        } else {
+            return res.status(HttpStatus.OK).json({ status: true, code: HttpStatus.CREATED,  message: 'Students.', object: users});
+        }
+        
     }
 
     // @ApiOperation({ title: 'Create an user', description: "Create an user passing a object of type CreateUserDto. Return the object created" })
@@ -22,13 +28,15 @@ export class StudentsController {
 
         if(!createStudentDto.email || !createStudentDto.goal || !createStudentDto.lastName || !createStudentDto.name || !createStudentDto.password
             || !createStudentDto.phone || !createStudentDto.selfDescription || !createStudentDto.university || !createStudentDto.username || !createStudentDto.video ) {
-                throw new HttpException({
-                    status: HttpStatus.CONFLICT,
-                    error: 'Missing fields to complete registration.',
-                }, HttpStatus.CONFLICT);
+                return res.status(HttpStatus.CONFLICT).json({ status: false, code: HttpStatus.CONFLICT, message: 'Missing fields to complete registration.'});
             }
         
         const user = await this.studentsService.create(createStudentDto);
-        return res.status(HttpStatus.CREATED).json({ status: 201, description: 'The student has been successfully created.', object: user });
+
+        if (user instanceof Error){
+            return res.status(HttpStatus.CONFLICT).json({ status: false, code: HttpStatus.CONFLICT,  message: user.message});
+        } else {
+            return res.status(HttpStatus.CREATED).json({ status: true, code: HttpStatus.CREATED,  message: 'The student has been successfully created.'});
+        }
     }
 }

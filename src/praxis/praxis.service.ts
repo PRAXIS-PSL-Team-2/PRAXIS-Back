@@ -11,37 +11,47 @@ export class PraxisService {
         @InjectModel('Praxis') private readonly classModel: Model<Class>
     ) {}
 
-    async findAll(): Promise<Praxis[]> {
+    async findAll(): Promise<Praxis[] | Error> {
         try {
             return await this.praxisModel.find().exec();
         } catch (e) {
-            throw new HttpException(e, HttpStatus.INTERNAL_SERVER_ERROR);
+            const error = new Error()
+            error.message = String(e);
+            return error;
         }
     }
 
-    async create( createPraxisDto: CreatePraxisDto): Promise<Praxis> {
+    async create( createPraxisDto: CreatePraxisDto): Promise<Praxis | Error> {
         try {
             const newPraxis = new this.praxisModel(createPraxisDto);
 
             return await newPraxis.save();
         } catch (e) {
-            throw new HttpException(e, HttpStatus.INTERNAL_SERVER_ERROR);
+            const error = new Error()
+            error.message = String(e);
+            return error;
         }
     }
 
-    async update(ID: String, newValue: any): Promise<Praxis> {
+    async update(ID: String, newValue: any): Promise<Praxis | Error> {
         const user = await this.praxisModel.findById(ID).exec();
 
         if (!user._id) {
-            throw new HttpException({
-                status: HttpStatus.NOT_FOUND,
-                error: 'User not found.',
-            }, HttpStatus.NOT_FOUND);
+            const error = new Error()
+            error.message = 'User not found.';
+            return error;
         }
 
-        await this.praxisModel.findByIdAndUpdate(ID, newValue).exec();
+        try {
+            await this.praxisModel.findByIdAndUpdate(ID, newValue).exec();
 
-        return await this.praxisModel.findById(ID).exec();
+            return await this.praxisModel.findById(ID).exec();
+        } catch (e) {
+            const error = new Error()
+            error.message = String(e);
+            return error;
+        }
+
     }
 
     async getAvailablePraxis(): Promise<Praxis[]>{
@@ -55,7 +65,7 @@ export class PraxisService {
 
     }
 
-    async getPraxisVersion(university : String): Promise<string> {
+    async getPraxisVersion(university : String): Promise<any> {
         const  availablePraxis  = await this.praxisModel.aggregate([
             { $project: {
                 _id: 0, 
@@ -78,10 +88,11 @@ export class PraxisService {
             return availablePraxis[0].praxisVersionId;
         }
         else {
-            throw new HttpException({
-                status: HttpStatus.NOT_FOUND,
-                error: 'That university does not have calls available for praxis at this time.',
-            }, HttpStatus.NOT_FOUND);
+            return {
+                status: false,
+                code: HttpStatus.NOT_FOUND,
+                message: 'That university does not have calls available for praxis at this time.'
+            };
         }
     }
 
@@ -100,10 +111,11 @@ export class PraxisService {
         });
 
         if (result.length == 0) {
-            throw new HttpException({
-                status: HttpStatus.CONFLICT,
-                error: 'The student is not a candidate for that version of praxis.',
-            }, HttpStatus.CONFLICT);
+            return {
+                status: false,
+                code: HttpStatus.NOT_FOUND,
+                message: 'The student is not a candidate for that version of praxis.That university does not have calls available for praxis at this time.'
+            };
         }
 
         const body = {$addToSet: { students: studentId }};

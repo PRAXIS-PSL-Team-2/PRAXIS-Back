@@ -10,9 +10,16 @@ export class PraxisController {
 
     // @ApiOperation({ title: 'Get all users', description: "Return a json with all the users" })
     @Get()
-    public async getStudents(@Response() res) {
+    public async getPraxis(@Response() res) {
         const praxis = await this.praxisService.findAll();
-        return res.status(HttpStatus.OK).json(praxis);
+
+
+        if (praxis instanceof Error){
+            return res.status(HttpStatus.CONFLICT).json({ status: false, code: HttpStatus.CONFLICT,  message: praxis.message});
+        } else {
+            return res.status(HttpStatus.OK).json({ status: true, code: HttpStatus.CREATED,  message: 'Praxis.', object: praxis});
+        }
+        
     }
     
 
@@ -20,11 +27,17 @@ export class PraxisController {
     // @ApiResponse({ status: 201, description: 'The user has been successfully created.' })
     // @ApiResponse({ status: 403, description: 'Forbidden.' })
     @Post()
-    public async createStudent(@Response() res, @Body() createPraxisDto: CreatePraxisDto) {
+    public async createPraxis(@Response() res, @Body() createPraxisDto: CreatePraxisDto) {
 
         const praxis = await this.praxisService.create(createPraxisDto);
 
-        return res.status(HttpStatus.CREATED).json(praxis);
+        
+        if (praxis instanceof Error){
+            return res.status(HttpStatus.CONFLICT).json({ status: false, code: HttpStatus.CONFLICT,  message: praxis.message});
+        } else {
+            return res.status(HttpStatus.CREATED).json({ status: true, code: HttpStatus.CREATED,  message: 'The Praxis Version has been successfully created.'});
+        }
+        
     }
 
 
