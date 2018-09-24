@@ -45,8 +45,11 @@ export class AuthService {
         console.log('return the token');
         console.log(accessToken);
         return {
-            expiresIn,
             accessToken,
+            user: {
+                id: user._id,
+                role: user.role
+            }
         };
     }
     async validateUser(payload: JwtPayload): Promise<any> {

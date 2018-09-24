@@ -36,22 +36,20 @@ export class StudentsService {
         try {
             const newStudent = await this.studentMapper(createStudentDto);
 
-
             const response = await this.authService.register(newStudent);
 
             if(response.success) {
-
-                let username = newStudent.username;
-                
-                const student = await this.UserService.findOne({"username": username});
-
-                console.log("ID",student._id);
-                
-                await this.praxisService.setStudentCandidateToPraxis(student._id, student.studentData.praxisVersion);
-
+                setTimeout(async () => 
+                    await this.studentModel.findOne({"username": newStudent.username}).exec(
+                        (err, student) => {
+                            if(err) {
+                                return response;
+                            } else {
+                                this.praxisService.setStudentCandidateToPraxis(student._id, student.studentData.praxisVersion);
+                            }
+                        }
+                ), 1000);
             }
-    
-
             return response;
 
         } catch (e) {
@@ -59,7 +57,6 @@ export class StudentsService {
             error.message = String(e);
             return error;
         }
-
     }
 
     
