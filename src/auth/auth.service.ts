@@ -40,8 +40,7 @@ export class AuthService {
 
         const accessToken = jwt.sign({ id: user._id,
             username: user.username,
-            role: user.role,
-            studentData: user.studentData }, 'ILoveNestjs', { expiresIn });
+            role: user.role }, 'ILoveNestjs', { expiresIn });
         console.log('return the token');
         console.log(accessToken);
         return {
@@ -53,6 +52,8 @@ export class AuthService {
         };
     }
     async validateUser(payload: JwtPayload): Promise<any> {
-        return await this.usersService.findById(payload.id);
+        console.log("VALIDANDO USER",payload);
+        
+        return await this.usersService.findByUsername(payload.username);
     }
 }

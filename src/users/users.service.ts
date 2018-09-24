@@ -21,6 +21,10 @@ export class UsersService implements IUsersService {
     async findById(ID: number): Promise<IUser> {
         return await this.userModel.findById(ID).exec();
     }
+
+    async findByUsername(username: string): Promise<IUser> {
+        return await this.userModel.findOne({"username": username}).exec();
+    }
     async create(createUserDto: CreateUserDto): Promise<IUser> {
         const createdUser = new this.userModel(createUserDto);
         return await createdUser.save();

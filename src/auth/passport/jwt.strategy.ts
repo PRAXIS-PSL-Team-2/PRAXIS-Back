@@ -12,17 +12,15 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
         super({
             jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
             secretOrKey: 'ILoveNestjs',
-        },
-        // tslint:disable-next-line:ban-types
-        async (req: Request, payload: any, next: Function) => await this.validate(req, payload, next));
+        })
+
     }
 
-    // tslint:disable-next-line:ban-types
-    async validate(req: Request, payload: JwtPayload, done: Function) {
+    async validate(payload: JwtPayload) {
         const user = await this.authService.validateUser(payload);
         if (!user) {
-            return done(new UnauthorizedException(), false);
+            throw new UnauthorizedException();
         }
-        done(null, user);
+        return user;
     }
 }

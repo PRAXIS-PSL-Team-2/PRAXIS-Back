@@ -11,11 +11,12 @@ import { UsersModule } from '../users/users.module';
 // Strategies
 import { JwtStrategy } from './passport/jwt.strategy';
 import { LocalStrategy } from './passport/local.strategy';
-
-import { authenticate } from 'passport';
+import { PassportModule } from '@nestjs/passport';
 
 @Module({
-  imports: [UsersModule],
+  imports: [
+    PassportModule.register({ defaultStrategy: 'jwt' }),
+    UsersModule],
   controllers: [AuthController],
   providers: [AuthService, JwtStrategy, LocalStrategy],
   exports: [AuthService, JwtStrategy, LocalStrategy],
