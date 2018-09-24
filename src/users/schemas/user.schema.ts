@@ -10,10 +10,6 @@ export const UserSchema = new Schema(
             unique: true,
             type: String
         },
-        password: {
-            required: true,
-            type: String
-        },
         role: {
             type: String,
             required: true,
@@ -29,6 +25,7 @@ export const UserSchema = new Schema(
             required: () => { return this.role === 'professor'; },
             default: null
         },
+        password: String
     }, 
     { 
         timestamps: true

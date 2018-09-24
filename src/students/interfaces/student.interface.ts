@@ -12,10 +12,10 @@ export interface StudentData extends Document {
     video: string;
 }
 
-export interface Student extends Document {
-    readonly username: string;
-    readonly password: string;
-    role: string;
-    studentData: StudentData;
-    readonly professorData: null;
-}
+// export interface Student extends Document {
+//     readonly username: string;
+//     readonly password: string;
+//     role: string;
+//     studentData: StudentData;
+//     readonly professorData: null;
+// }

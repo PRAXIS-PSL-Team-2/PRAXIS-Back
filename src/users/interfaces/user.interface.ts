@@ -4,7 +4,7 @@ import { StudentData } from '../../students/interfaces/student.interface';
 export interface IUser extends PassportLocalDocument {
     readonly username: string;
     readonly password: string;
-    readonly role: string;
-    readonly studentData: StudentData;
-    readonly professorData: null;
+    role: string;
+    studentData: StudentData;
+    professorData: null;
 }
