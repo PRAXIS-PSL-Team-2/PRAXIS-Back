@@ -11,10 +11,10 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     constructor(private readonly authService: AuthService) {
         super({
             jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-            secretOrKey: 'ILovePokemon',
+            secretOrKey: 'ILoveNestjs',
         },
         // tslint:disable-next-line:ban-types
-        async (req: Request, payload: any, next: Function) => await this.verify(req, payload, next));
+        async (req: Request, payload: any, next: Function) => await this.validate(req, payload, next));
     }
 
     // tslint:disable-next-line:ban-types

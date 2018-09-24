@@ -1,7 +1,8 @@
-import { Controller, Get, Response, HttpStatus, Post, Body, HttpException } from '@nestjs/common';
+import { Controller, Get, Response, HttpStatus, Post, Body, HttpException, UseGuards } from '@nestjs/common';
 import { ApiUseTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { StudentsService } from './students.service';
 import { CreateStudentDto } from './dto/create-student.dto';
+import { AuthGuard } from '@nestjs/passport';
 
 @ApiUseTags('students')
 @Controller('api/v1/students')
@@ -10,6 +11,7 @@ export class StudentsController {
 
     // @ApiOperation({ title: 'Get all users', description: "Return a json with all the users" })
     @Get()
+    @UseGuards(AuthGuard('jwt'))
     public async getStudents(@Response() res) {
         const users = await this.studentsService.findAll();
 
