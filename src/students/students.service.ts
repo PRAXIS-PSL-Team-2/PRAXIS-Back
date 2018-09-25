@@ -59,6 +59,31 @@ export class StudentsService {
         }
     }
 
+    async checkIfUsernameExist( input: String): Promise<Boolean | Error> {
+
+        try {
+            const result = await this.studentModel.find({username: input}).exec();
+            return (result.length == 0);
+        } catch (e) {
+            const error = new Error()
+            error.message = String(e);
+            return error;
+        }
+
+    }
+
+    async checkIfEmailExist( input: String): Promise<Boolean | Error> {
+
+        try {
+            const result = await this.studentModel.find({"studentData.email" : input}).exec();
+            return (result.length == 0);
+        } catch (e) {
+            const error = new Error()
+            error.message = String(e);
+            return error;
+        }
+
+    }
     
     async studentMapper( createStudentDto: CreateStudentDto): Promise<IUser> {
 
