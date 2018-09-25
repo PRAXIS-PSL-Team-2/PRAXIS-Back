@@ -1,6 +1,7 @@
-import { NestFactory } from '@nestjs/core';
+import { NestFactory, Reflector } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { RolesGuard } from './auth/guards/roles.guard';
 
 declare const module: any;
 
@@ -12,7 +13,7 @@ async function bootstrap() {
   .setDescription('API Documentation')
   .setVersion('1.0.0')
   .setSchemes(AppModule.isDev ? 'http' : 'https')
-  .addBearerAuth()
+  .addBearerAuth('Authorization', 'header')
   .build();
 
   const document = SwaggerModule.createDocument(app, options);

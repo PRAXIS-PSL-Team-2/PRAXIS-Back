@@ -1,21 +1,27 @@
+
 import { Injectable, Inject, forwardRef, HttpException, HttpStatus, Next } from '@nestjs/common';
-import { Student, StudentData } from './interfaces/student.interface';
-import { Model, Types, Schema } from 'mongoose';
+import { StudentData } from './interfaces/student.interface';
+import { Model, Types, Schema, PassportLocalModel } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { CreateStudentDto } from './dto/create-student.dto';
 import { PraxisService } from '../praxis/praxis.service';
+import { AuthService } from '../auth/auth.service';
+import { IUser } from '../users/interfaces/user.interface';
+import { UsersService } from '../users/users.service';
 
 
 
 @Injectable()
 export class StudentsService {
     constructor(
-        @InjectModel('User') private readonly studentModel: Model<Student>,
+        @InjectModel('User') private readonly studentModel: PassportLocalModel<IUser>,
         @InjectModel('User') private readonly studentDataModel: Model<StudentData>,
+        private readonly authService: AuthService,
+        private readonly UserService: UsersService,
         private readonly praxisService: PraxisService
     ) {}
 
-    async findAll(): Promise<Student[] | Error> {
+    async findAll(): Promise<IUser[] | Error> {
         try {
             return await this.studentModel.find().exec();
         } catch (e) {
@@ -25,19 +31,32 @@ export class StudentsService {
         }
     }
 
-    async create( createStudentDto: CreateStudentDto): Promise<Student | Error> {
+    async create( createStudentDto: CreateStudentDto): Promise<any | Error> {
 
         try {
             const newStudent = await this.studentMapper(createStudentDto);
-            const student = await newStudent.save();
-            await this.praxisService.setStudentCandidateToPraxis(student._id, student.studentData.praxisVersion);
-            return student
+
+            const response = await this.authService.register(newStudent);
+
+            if(response.success) {
+                setTimeout(async () => 
+                    await this.studentModel.findOne({"username": newStudent.username}).exec(
+                        (err, student) => {
+                            if(err) {
+                                return response;
+                            } else {
+                                this.praxisService.setStudentCandidateToPraxis(student._id, student.studentData.praxisVersion);
+                            }
+                        }
+                ), 1000);
+            }
+            return response;
+
         } catch (e) {
             const error = new Error()
             error.message = String(e);
             return error;
         }
-
     }
 
     async checkIfUsernameExist( input: String): Promise<Boolean | Error> {
@@ -66,7 +85,7 @@ export class StudentsService {
 
     }
     
-    async studentMapper( createStudentDto: CreateStudentDto): Promise<Student> {
+    async studentMapper( createStudentDto: CreateStudentDto): Promise<IUser> {
 
         const newStudent = new this.studentModel(createStudentDto);
 
