@@ -2,6 +2,7 @@ import { Controller, Get, Response, HttpStatus, Post, Body, Param } from '@nestj
 import { ApiUseTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { PraxisService } from './praxis.service';
 import { CreatePraxisDto } from './dto/create-praxis.dto';
+import { UpdateAcceptedStudentsDto } from './dto/updateAcceptedStudents.dto';
 
 @ApiUseTags('praxis')
 @Controller('api/v1/praxis')
@@ -57,5 +58,31 @@ export class PraxisController {
     public async acceptStudentInPraxis(@Response() res, @Param('studentId') studentId: String, @Param('praxisId') praxisId: String) {
         const praxis = await this.praxisService.acceptStudentInPraxis(studentId, praxisId);
         return res.json(praxis);
+    }
+
+    @ApiOperation({ title: 'Updates the list of accepted students given the id of a praxis and an array of candidates students id.' })
+    @Post('/:praxisId/update_accepted')
+    public async updateAcceptedStudents(@Response() res, @Body() updateAcceptedStudentsDto: UpdateAcceptedStudentsDto) {
+        const praxis = await this.praxisService.updateAcceptedStudents(updateAcceptedStudentsDto);
+
+        return res.json({ status: true, code: HttpStatus.CREATED,  message: 'Students accepted.'});
+    }
+
+    @ApiOperation({ title: 'Get the candidates of a praxis given a Praxis id.' })
+    @Post('/:praxisId/candidates')
+    public async getCandidates(@Response() res, @Param('praxisId') praxisId: String) {
+        
+        const praxis = await this.praxisService.getCandidates(praxisId);
+
+        return res.json({ status: true, code: HttpStatus.CREATED,  message: 'Candidates of Praxis', object: praxis});
+    }
+
+    @ApiOperation({ title: 'Get the students of a praxis given a Praxis id.' })
+    @Post('/:praxisId/students')
+    public async getStudents(@Response() res, @Param('praxisId') praxisId: String) {
+        
+        const praxis = await this.praxisService.getStudents(praxisId);
+
+        return res.json({ status: true, code: HttpStatus.CREATED,  message: 'Students of Praxis', object: praxis});
     }
 }

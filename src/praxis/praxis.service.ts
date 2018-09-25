@@ -1,10 +1,12 @@
 import { Injectable, HttpStatus, HttpException, Inject, forwardRef, OnModuleInit } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, PassportLocalModel } from 'mongoose';
 import { Praxis, Class } from './interfaces/praxis.interface';
 import { CreatePraxisDto } from './dto/create-praxis.dto';
 import { StudentsService } from './../students/students.service';
 import { ModuleRef } from '@nestjs/core';
+import { UpdateAcceptedStudentsDto } from './dto/updateAcceptedStudents.dto';
+import { IUser } from '../users/interfaces/user.interface';
 
 @Injectable()
 export class PraxisService implements OnModuleInit {
@@ -114,9 +116,7 @@ export class PraxisService implements OnModuleInit {
         
     }
 
-    async acceptStudentInPraxis(studentId: String, praxisId: String) {
-
-        
+    async acceptStudentInPraxis(studentId: String, praxisId: String) {     
         try {
             const result = await this.praxisModel.find({
                 _id: praxisId,
@@ -144,8 +144,91 @@ export class PraxisService implements OnModuleInit {
                 error: String(error),
             }, HttpStatus.CONFLICT);
         }
+    }
 
+    async updateAcceptedStudents(updateAcceptedStudentsDto: UpdateAcceptedStudentsDto) {
 
+        try {
+
+            const result = await this.praxisModel.find({
+                _id: updateAcceptedStudentsDto.praxisId,
+                candidates: {$all: updateAcceptedStudentsDto.studentsId}
+            });  
+            
+            if (result.length == 0) {
+                return {
+                    status: false,
+                    code: HttpStatus.NOT_FOUND,
+                    message: 'Some student is not a candidate for that version of praxis.'
+                };
+            }
+
+            const body = {$addToSet: { students: updateAcceptedStudentsDto.studentsId }};
+
+            await this.update(updateAcceptedStudentsDto.praxisId, body);    
+        } catch (error) {
+
+            throw new HttpException({
+                status: false,
+                code: HttpStatus.CONFLICT,
+                error: String(error),
+            }, HttpStatus.CONFLICT);
+            
+        }  
+    }
+
+    async getCandidates(praxisId: String) {    
+        let result;
+        
+        try {
+            result = await this.praxisModel.findOne({
+                _id: praxisId,
+            },'candidates -_id').populate('candidates');  
+        } catch(error){
+            throw new HttpException({
+                status: false,
+                code:HttpStatus.CONFLICT,
+                error: String(error)
+            }, HttpStatus.CONFLICT);
+        }
+        
+        if (result['candidates'].length == 0) {
+            throw new HttpException({
+                status: false,
+                code:HttpStatus.NOT_FOUND,
+                error: 'This PRAXIS has no candidates.'
+            }, HttpStatus.NOT_FOUND);
+        }
+
+        return result;
+
+    }
+
+    async getStudents(praxisId: String) {     
+        let result;
+        
+        try {
+            result = await this.praxisModel.findOne({
+                _id: praxisId,
+            },'students -_id').populate('students');  
+        } catch(error){
+            throw new HttpException({
+                status: false,
+                code:HttpStatus.CONFLICT,
+                error: String(error)
+            }, HttpStatus.CONFLICT);
+        }
+        
+        if ( result['students'].length == 0) {
+
+            throw new HttpException({
+                status: false,
+                code:HttpStatus.NOT_FOUND,
+                error: 'This PRAXIS has no students.'
+            }, HttpStatus.NOT_FOUND);
+        }
+
+        return result;
     }
 
 }
