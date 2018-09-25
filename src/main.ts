@@ -1,7 +1,8 @@
 import { NestFactory, Reflector } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import { RolesGuard } from './auth/guards/roles.guard';
+import { AllExceptionsFilter } from './shared/filters/http-exception.filter';
+
 
 declare const module: any;
 
@@ -23,6 +24,8 @@ async function bootstrap() {
     module.hot.accept();
     module.hot.dispose(() => app.close());
   }
+
+  app.useGlobalFilters(new AllExceptionsFilter());
 
   app.enableCors({
     origin: ['http://localhost:4200', 'https://frontend-homework.herokuapp.com']

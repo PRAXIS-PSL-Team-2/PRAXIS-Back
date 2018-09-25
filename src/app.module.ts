@@ -9,12 +9,19 @@ import { UsersModule } from './users/users.module';
 import { StudentsModule } from './students/students.module';
 import { PraxisModule } from './praxis/praxis.module';
 import { AuthModule } from './auth/auth.module';
-import { RolesGuard } from './auth/guards/roles.guard';
+import { APP_FILTER } from '@nestjs/core';
+import { AllExceptionsFilter } from './shared/filters/http-exception.filter';
 
 @Module({
   imports: [ MongooseModule.forRoot('mongodb://admin:admin123@ds159772.mlab.com:59772/praxisdb', { useNewUrlParser: true }), SharedModule, UsersModule, StudentsModule, PraxisModule, AuthModule],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+    provide: APP_FILTER,
+      useClass: AllExceptionsFilter,
+    },
+  ],
 })
 export class AppModule {
   static host: string;
