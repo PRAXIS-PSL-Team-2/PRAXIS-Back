@@ -25,9 +25,9 @@ export class AuthController {
                     message: 'User Not Found',
                 });
             } else {
-                console.log('start getting the token');
+
                 const token = this.authService.createToken(user);
-                console.log(token);
+
                 return res.status(HttpStatus.OK).json(token);
             }
         });
