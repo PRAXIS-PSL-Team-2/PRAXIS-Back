@@ -1,3 +1,4 @@
+import { Configuration } from 'shared/configuration/configuration.enum';
 import { StudentData } from './../students/interfaces/student.interface';
 import * as jwt from 'jsonwebtoken';
 import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
@@ -8,11 +9,16 @@ import { IUser } from '../users/interfaces/user.interface';
 import { InjectModel } from '@nestjs/mongoose';
 import { debug } from 'console';
 import { RegistrationStatus } from './interfaces/registrationStatus.interface';
+import { ConfigurationService } from '../shared/configuration/configuration.service';
 
 @Injectable()
 export class AuthService {
+    static JWT_KEY;
     constructor(private readonly usersService: UsersService,
-                @InjectModel('User') private readonly userModel: PassportLocalModel<IUser>) { }
+                private readonly _configurationService: ConfigurationService,
+                @InjectModel('User') private readonly userModel: PassportLocalModel<IUser>) {
+                    AuthService.JWT_KEY = _configurationService.get(Configuration.JWT_KEY);
+                }
 
     async register(user: IUser) {
         let status: RegistrationStatus = { success: true, message: 'user register' };
@@ -38,7 +44,7 @@ export class AuthService {
 
         const accessToken = jwt.sign({ id: user._id,
             username: user.username,
-            role: user.role }, 'ILoveNestjs', { expiresIn });
+            role: user.role }, AuthService.JWT_KEY, { expiresIn });
 
         return {
             accessToken,
