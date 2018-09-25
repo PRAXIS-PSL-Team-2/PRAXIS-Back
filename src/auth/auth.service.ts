@@ -33,16 +33,13 @@ export class AuthService {
     }
 
     createToken(user) {
-        console.log('get the expiration');
+        
         const expiresIn = '12h';
-        console.log('sign the token');
-        console.log(user);
 
         const accessToken = jwt.sign({ id: user._id,
             username: user.username,
             role: user.role }, 'ILoveNestjs', { expiresIn });
-        console.log('return the token');
-        console.log(accessToken);
+
         return {
             accessToken,
             user: {
@@ -52,8 +49,6 @@ export class AuthService {
         };
     }
     async validateUser(payload: JwtPayload): Promise<any> {
-        console.log("VALIDANDO USER",payload);
-        
         return await this.usersService.findByUsername(payload.username);
     }
 }

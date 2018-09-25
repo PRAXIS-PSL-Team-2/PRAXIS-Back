@@ -1,8 +1,10 @@
+import { RolesGuard } from './../auth/guards/roles.guard';
 import { Controller, Get, Response, HttpStatus, Post, Body, HttpException, UseGuards } from '@nestjs/common';
-import { ApiUseTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { ApiUseTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { StudentsService } from './students.service';
 import { CreateStudentDto } from './dto/create-student.dto';
 import { AuthGuard } from '@nestjs/passport';
+import { Roles } from '../auth/guards/roles.decorator';
 
 @ApiUseTags('students')
 @Controller('api/v1/students')
@@ -11,7 +13,9 @@ export class StudentsController {
 
     // @ApiOperation({ title: 'Get all users', description: "Return a json with all the users" })
     @Get()
-    @UseGuards(AuthGuard())
+    @ApiBearerAuth()
+    @UseGuards(AuthGuard(), RolesGuard)
+    @Roles('student')
     public async getStudents(@Response() res) {
         const users = await this.studentsService.findAll();
 
