@@ -8,6 +8,7 @@ import { PraxisService } from '../praxis/praxis.service';
 import { AuthService } from '../auth/auth.service';
 import { IUser } from '../users/interfaces/user.interface';
 import { UsersService } from '../users/users.service';
+import { Praxis, Class } from '../praxis/interfaces/praxis.interface';
 
 
 
@@ -59,6 +60,43 @@ export class StudentsService {
         }
     }
 
+    async update(ID: String, newValue: any): Promise<IUser | Error> {
+        const user = await this.studentModel.findById(ID).exec();
+
+        if (!user._id) {
+            throw new HttpException({
+                status: false,
+                code: HttpStatus.FORBIDDEN,
+                error: 'User not found.',
+            }, 403);
+        }
+
+        try {
+            await this.studentModel.findByIdAndUpdate(ID, newValue).exec();
+
+            return await this.studentModel.findById(ID).exec();
+        } catch (e) {
+            const error = new Error()
+            error.message = String(e);
+            return error;
+        }
+
+    }
+
+    async changeStatusToAccepted( studentId: String): Promise<Boolean | Error> {
+
+        try {
+            await this.studentModel.update(studentId,{status: 'accepted'}).exec();
+            return true;
+
+        } catch (e) {
+            const error = new Error()
+            error.message = String(e);
+            return false;
+        }
+
+    }
+
     async checkIfUsernameExist( input: String): Promise<Boolean | Error> {
 
         try {
@@ -69,7 +107,6 @@ export class StudentsService {
             error.message = String(e);
             return error;
         }
-
     }
 
     async checkIfEmailExist( input: String): Promise<Boolean | Error> {

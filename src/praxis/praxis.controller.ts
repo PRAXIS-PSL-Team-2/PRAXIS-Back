@@ -8,11 +8,10 @@ import { CreatePraxisDto } from './dto/create-praxis.dto';
 export class PraxisController {
     constructor(private readonly praxisService: PraxisService){}
 
-    // @ApiOperation({ title: 'Get all users', description: "Return a json with all the users" })
+    @ApiOperation({ title: 'Get all Praxis versions.'})
     @Get()
     public async getPraxis(@Response() res) {
         const praxis = await this.praxisService.findAll();
-
 
         if (praxis instanceof Error){
             return res.json({ status: false, code: HttpStatus.CONFLICT,  message: praxis.message});
@@ -24,8 +23,6 @@ export class PraxisController {
     
 
     @ApiOperation({ title: 'Create a Praxis version.', description: "Date format: MM/DD/YY" })
-    // @ApiResponse({ status: 201, description: 'The user has been successfully created.' })
-    // @ApiResponse({ status: 403, description: 'Forbidden.' })
     @Post()
     public async createPraxis(@Response() res, @Body() createPraxisDto: CreatePraxisDto) {
 
@@ -41,18 +38,21 @@ export class PraxisController {
     }
 
 
+    @ApiOperation({ title: 'Return an array of universities with open calls for praxis.' })
     @Get('/universities')
     public async getAvailablePraxis(@Response() res) {
         const praxis = await this.praxisService.getAvailablePraxis();
         return res.json(praxis);
     }
 
+    @ApiOperation({ title: 'Return the Praxis id given the name of a university as long as there is an open call for that university.' })
     @Get('/praxis_version/:university')
     public async getPraxisVersion(@Response() res, @Param('university') university: String) {
         const praxis = await this.praxisService.getPraxisVersion(university);
         return res.json(praxis);
     }
-
+    
+    @ApiOperation({ title: 'Accepts a student to praxis. Add a candidate student to the list of students of a praxis.' })
     @Get('/:praxisId/accept/:studentId')
     public async acceptStudentInPraxis(@Response() res, @Param('studentId') studentId: String, @Param('praxisId') praxisId: String) {
         const praxis = await this.praxisService.acceptStudentInPraxis(studentId, praxisId);

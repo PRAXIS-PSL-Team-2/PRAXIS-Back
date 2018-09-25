@@ -1,15 +1,25 @@
-import { Injectable, HttpStatus, HttpException } from '@nestjs/common';
+import { Injectable, HttpStatus, HttpException, Inject, forwardRef, OnModuleInit } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Praxis, Class } from './interfaces/praxis.interface';
 import { CreatePraxisDto } from './dto/create-praxis.dto';
+import { StudentsService } from './../students/students.service';
+import { ModuleRef } from '@nestjs/core';
 
 @Injectable()
-export class PraxisService {
+export class PraxisService implements OnModuleInit {
+
+    private studentsService: StudentsService;
+
     constructor(
+        private readonly moduleRef: ModuleRef,
         @InjectModel('Praxis') private readonly praxisModel: Model<Praxis>,
-        @InjectModel('Praxis') private readonly classModel: Model<Class>
+        @InjectModel('Praxis') private readonly classModel: Model<Class>,
     ) {}
+
+    onModuleInit() {
+        this.studentsService = this.moduleRef.get(StudentsService);
+    }
 
     async findAll(): Promise<Praxis[] | Error> {
         try {
@@ -34,11 +44,11 @@ export class PraxisService {
     }
 
     async update(ID: String, newValue: any): Promise<Praxis | Error> {
-        const user = await this.praxisModel.findById(ID).exec();
+        const praxis = await this.praxisModel.findById(ID).exec();
 
-        if (!user._id) {
+        if (!praxis._id) {
             const error = new Error()
-            error.message = 'User not found.';
+            error.message = 'Praxis not found.';
             return error;
         }
 
@@ -105,22 +115,37 @@ export class PraxisService {
     }
 
     async acceptStudentInPraxis(studentId: String, praxisId: String) {
-        const result = await this.praxisModel.find({
-            _id: praxisId,
-            candidates: {$in: studentId}
-        });
 
-        if (result.length == 0) {
-            return {
+        
+        try {
+            const result = await this.praxisModel.find({
+                _id: praxisId,
+                candidates: {$in: studentId}
+            });  
+            
+            if (result.length == 0) {
+                return {
+                    status: false,
+                    code: HttpStatus.NOT_FOUND,
+                    message: 'The student is not a candidate for that version of praxis.'
+                };
+            }
+    
+            this.studentsService.changeStatusToAccepted(studentId);
+    
+            const body = {$addToSet: { students: studentId }};
+    
+            return this.update(praxisId, body);
+
+        } catch (error) {
+            throw new HttpException({
                 status: false,
-                code: HttpStatus.NOT_FOUND,
-                message: 'The student is not a candidate for that version of praxis.That university does not have calls available for praxis at this time.'
-            };
+                code: HttpStatus.CONFLICT,
+                error: String(error),
+            }, HttpStatus.CONFLICT);
         }
 
-        const body = {$addToSet: { students: studentId }};
 
-        return this.update(praxisId, body);
     }
 
 }

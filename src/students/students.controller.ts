@@ -14,9 +14,9 @@ export class StudentsController {
 
     // @ApiOperation({ title: 'Get all users', description: "Return a json with all the users" })
     @Get()
-    @ApiBearerAuth()
-    @UseGuards(AuthGuard(), RolesGuard)
-    @Roles('student')
+    // @ApiBearerAuth()
+    // @UseGuards(AuthGuard(), RolesGuard)
+    // @Roles('student')
     public async getStudents(@Response() res) {
         const users = await this.studentsService.findAll();
 
