@@ -69,7 +69,7 @@ export class PraxisController {
     }
 
     @ApiOperation({ title: 'Get the candidates of a praxis given a Praxis id.' })
-    @Post('/:praxisId/candidates')
+    @Get('/:praxisId/candidates')
     public async getCandidates(@Response() res, @Param('praxisId') praxisId: String) {
         
         const praxis = await this.praxisService.getCandidates(praxisId);
@@ -78,7 +78,7 @@ export class PraxisController {
     }
 
     @ApiOperation({ title: 'Get the students of a praxis given a Praxis id.' })
-    @Post('/:praxisId/students')
+    @Get('/:praxisId/students')
     public async getStudents(@Response() res, @Param('praxisId') praxisId: String) {
         
         const praxis = await this.praxisService.getStudents(praxisId);
