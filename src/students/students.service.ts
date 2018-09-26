@@ -17,6 +17,7 @@ export class StudentsService {
     constructor(
         @InjectModel('User') private readonly studentModel: PassportLocalModel<IUser>,
         @InjectModel('User') private readonly studentDataModel: Model<StudentData>,
+        @InjectModel('Praxis') private readonly praxisModel: Model<Praxis>,
         private readonly authService: AuthService,
         private readonly UserService: UsersService,
         private readonly praxisService: PraxisService
@@ -32,13 +33,15 @@ export class StudentsService {
         }
     }
 
-    async findById(id: String): Promise<IUser | Error> {
+    async findById(id: String): Promise<IUser> {
         try {
             return await this.studentModel.findById(id).exec();
         } catch (e) {
-            const error = new Error()
-            error.message = String(e);
-            return error;
+            throw new HttpException({
+                status: false,
+                code: HttpStatus.CONFLICT,
+                error: String(e),
+            }, HttpStatus.CONFLICT);
         }
     }
 
@@ -128,6 +131,37 @@ export class StudentsService {
         }
 
     }
+
+    async getClasses( studentId : string ) {
+        const student = await this.findById(studentId)
+
+        // const classes = this.praxisService.getClasses(student.studentData.praxisVersion)
+
+        const classes = this.praxisModel.aggregate([
+            {
+                $match: { _id: student.studentData.praxisVersion}
+            },
+            { $unwind: "$schedule" },
+            {
+              $lookup:
+                {
+                    from: "users",
+                    let: {"classID": "$schedule._id"},
+                    pipeline: [
+                        { "$unwind": "$studentData.classes" },
+                        { "$match": { "$expr": { "$eq": [ "$studentData.classes.class_id", "$$classID" ] } } }
+                    ],
+                    as: "data"
+                }
+           }
+         ])
+
+        return classes
+    }
+
+
+
+
     
     async studentMapper( createStudentDto: CreateStudentDto): Promise<IUser> {
 

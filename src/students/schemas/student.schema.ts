@@ -48,13 +48,10 @@ export const StudentSchema = new Schema(
             {
                 class_id: {
                     type: Schema.Types.ObjectId,
-                    ref: "User",
                     required: true
                 },
                 attendance: {
-                    type: String,
-                    enum: ['','yes','no'],
-                    default: ''
+                    type: Boolean,
                 },
                 grade: {
                     type: Number,

@@ -246,6 +246,14 @@ export class PraxisService implements OnModuleInit {
         return result;
     }
 
+
+
+    /////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////
+    //////////////////// CLASSES ////////////////////////
+    /////////////////////////////////////////////////////
+    /////////////////////////////////////////////////////
+
     async createClass( praxisId: string, createClassDto: CreateClassDto): Promise<Praxis | Error> {
 
         const praxis = await this.findById(praxisId);
@@ -269,6 +277,24 @@ export class PraxisService implements OnModuleInit {
             error.message = String(e);
             return error;
         }
+    }
+
+    async getClasses( praxisId: string ): Promise<Praxis | Error> {
+
+        const praxis = await this.praxisModel.findOne({
+            _id: praxisId,
+        },'schedule -_id');
+
+        if (praxis == null) {
+            throw new HttpException({
+                status: false,
+                code: HttpStatus.CONFLICT,
+                error: 'Praxis not found.',
+            }, HttpStatus.CONFLICT);
+        }
+
+        return praxis['schedule']
+
     }
 
 }

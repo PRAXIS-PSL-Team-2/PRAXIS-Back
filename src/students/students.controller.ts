@@ -73,7 +73,7 @@ export class StudentsController {
         if (user instanceof Error){
             return res.json({ status: false, code: HttpStatus.CONFLICT,  message: user.message});
         } else {
-            return res.json({ status: true, code: HttpStatus.CREATED,  message: 'The professor has been successfully updated.'});
+            return res.json({ status: true, code: HttpStatus.CREATED,  message: 'The student has been successfully updated.'});
         }
     }
 
@@ -87,7 +87,20 @@ export class StudentsController {
         if (user instanceof Error){
             return res.json({ status: false, code: HttpStatus.CONFLICT,  message: user.message});
         } else {
-            return res.json({ status: true, code: HttpStatus.OK,  message: 'The professor has been successfully deleted.'});
+            return res.json({ status: true, code: HttpStatus.OK,  message: 'The student has been successfully deleted.'});
+        }
+    }
+
+    @ApiOperation({ title: 'Delete an student passing his _id.'})
+    @Get('/:studentId/classes')
+    public async getClasses( @Param('studentId') id: string, @Response() res) {
+
+        const classes = await this.studentsService.getClasses(id);
+        
+        if (classes instanceof Error){
+            return res.json({ status: false, code: HttpStatus.CONFLICT,  message: classes.message});
+        } else {
+            return res.json({ status: true, code: HttpStatus.OK,  message: 'Classes', object: classes});
         }
     }
 }

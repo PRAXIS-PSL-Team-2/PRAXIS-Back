@@ -118,4 +118,19 @@ export class PraxisController {
         
     }
 
+    @ApiUseTags('classes') 
+    @ApiOperation({ title: 'Get all classes for a specific praxis version.' })
+    @Get('/:praxisId/classes')
+    public async getClasses(@Response() res, @Param('praxisId') praxisId: string) {
+
+        const praxis = await this.praxisService.getClasses(praxisId);
+
+        if (praxis instanceof Error){
+            return res.json({ status: false, code: HttpStatus.CONFLICT,  message: praxis.message});
+        } else {
+            return res.json({ status: true, code: HttpStatus.CREATED,  message: 'Classes.', object: praxis});
+        }
+        
+    }
+
 }
