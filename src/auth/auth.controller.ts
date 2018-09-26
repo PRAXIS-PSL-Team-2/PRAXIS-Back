@@ -3,7 +3,7 @@ import { CreateUserDto } from '../users/dto/createUser.dto';
 import { LoginUserDto } from '../users/dto/loginUser.dto';
 import { AuthService } from './auth.service';
 import { AuthGuard } from '@nestjs/passport';
-import { ApiUseTags, ApiResponse } from '@nestjs/swagger';
+import { ApiUseTags, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { RegistrationStatus } from './interfaces/registrationStatus.interface';
 import { UsersService } from '../users/users.service';
 import { Inject } from '@nestjs/common';
@@ -29,6 +29,17 @@ export class AuthController {
 
                 return res.status(HttpStatus.OK).json(token);
             }
+        });
+    }
+
+    @Get('check/token')
+    @ApiBearerAuth()
+    @UseGuards(AuthGuard())
+    public async checkToken(@Response() res){
+        return res.json({
+            status: true,
+            code: HttpStatus.OK,
+            message: "Token available."
         });
     }
 }
