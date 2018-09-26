@@ -10,6 +10,11 @@ export const UserSchema = new Schema(
             unique: true,
             type: String
         },
+        email: {
+            required: true,
+            unique: true,
+            type: String
+        },
         role: {
             type: String,
             required: true,
@@ -18,12 +23,10 @@ export const UserSchema = new Schema(
         studentData: { 
             type: StudentSchema,
             required: () => { return this.role === 'student'; },
-            default: null
         },
         professorData: { 
             type: ProfessorSchema,
             required: () => { return this.role === 'professor'; },
-            default: null
         },
         password: String
     }, 

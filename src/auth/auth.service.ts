@@ -33,6 +33,7 @@ export class AuthService implements OnModuleInit {
         if (user.role == 'student') {
             await this.userModel.register(new this.userModel({
                 username: user.username,
+                email: user.email,
                 role: user.role,
                 studentData: user.studentData}), user.password, (err) => {
                 if (err) {
@@ -43,6 +44,7 @@ export class AuthService implements OnModuleInit {
         } else if(user.role == 'professor') {
             await this.userModel.register(new this.userModel({
                 username: user.username,
+                email: user.email,
                 role: user.role,
                 professorData: user.professorData}), user.password, (err) => {
                 if (err) {
@@ -53,6 +55,7 @@ export class AuthService implements OnModuleInit {
         } else if (user.role == 'admin') {
             await this.userModel.register(new this.userModel({
                 username: user.username,
+                email: user.email,
                 role: user.role}), user.password, (err) => {
                 if (err) {
                     debug(err);

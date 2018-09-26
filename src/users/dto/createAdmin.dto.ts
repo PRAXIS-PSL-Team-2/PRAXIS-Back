@@ -6,6 +6,9 @@ export class CreateAdminDto {
     readonly username: string;
 
     @ApiModelProperty()
+    readonly email: string;
+
+    @ApiModelProperty()
     readonly password: string;
 
 }

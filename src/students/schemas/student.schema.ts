@@ -10,11 +10,6 @@ export const StudentSchema = new Schema(
             required: true,
             type: String
         },
-        email: {
-            required: true,
-            unique: true,
-            type: String
-        },
         phone: {
             required: true,
             type: String

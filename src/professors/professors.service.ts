@@ -88,32 +88,6 @@ export class ProfessorsService {
         }
 
     }
-
-
-    // async checkIfUsernameExist( input: String): Promise<Boolean | Error> {
-
-    //     try {
-    //         const result = await this.studentModel.find({username: input}).exec();
-    //         return (result.length == 0);
-    //     } catch (e) {
-    //         const error = new Error()
-    //         error.message = String(e);
-    //         return error;
-    //     }
-    // }
-
-    // async checkIfEmailExist( input: String): Promise<Boolean | Error> {
-
-    //     try {
-    //         const result = await this.studentModel.find({"studentData.email" : input}).exec();
-    //         return (result.length == 0);
-    //     } catch (e) {
-    //         const error = new Error()
-    //         error.message = String(e);
-    //         return error;
-    //     }
-
-    // }
     
     async professorMapper( createProfessorDto: CreateProfessorDto): Promise<IUser> {
 
@@ -127,7 +101,6 @@ export class ProfessorsService {
         
         newProfessor.professorData.name = createProfessorDto.name;
         newProfessor.professorData.lastName = createProfessorDto.lastName;
-        newProfessor.professorData.email = createProfessorDto.email;
         newProfessor.professorData.specialty = createProfessorDto.specialty;
         newProfessor.professorData.selfDescription = createProfessorDto.selfDescription;
         

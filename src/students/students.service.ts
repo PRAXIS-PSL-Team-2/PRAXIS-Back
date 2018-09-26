@@ -131,7 +131,6 @@ export class StudentsService {
         
         newStudent.studentData.name = createStudentDto.name;
         newStudent.studentData.lastName = createStudentDto.lastName;
-        newStudent.studentData.email = createStudentDto.email;
         newStudent.studentData.phone = createStudentDto.phone;
         newStudent.studentData.university = createStudentDto.university;
         newStudent.studentData.goal = createStudentDto.goal;
