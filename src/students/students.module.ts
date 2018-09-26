@@ -8,12 +8,14 @@ import { PraxisSchema } from '../praxis/schemas/praxis.schema';
 import { AuthService } from '../auth/auth.service';
 import { UsersService } from '../users/users.service';
 import { PassportModule } from '@nestjs/passport';
+import { ClassSchema } from '../praxis/schemas/class.schema';
 
 
 @Module({
   imports: [
     MongooseModule.forFeature([{ name: 'User', schema: UserSchema }]),
     MongooseModule.forFeature([{ name: 'Praxis', schema: PraxisSchema }]),
+    MongooseModule.forFeature([{ name: 'Class', schema: ClassSchema }]),
     PassportModule.register({ defaultStrategy: 'jwt' })
   ],
   controllers: [StudentsController],

@@ -8,7 +8,7 @@ import { PraxisService } from '../praxis/praxis.service';
 import { AuthService } from '../auth/auth.service';
 import { IUser } from '../users/interfaces/user.interface';
 import { UsersService } from '../users/users.service';
-import { Praxis, Class } from '../praxis/interfaces/praxis.interface';
+import { Praxis } from '../praxis/interfaces/praxis.interface';
 
 
 

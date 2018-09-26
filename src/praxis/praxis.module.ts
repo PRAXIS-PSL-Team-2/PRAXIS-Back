@@ -7,10 +7,12 @@ import { StudentsService } from '../students/students.service';
 import { UserSchema } from '../users/schemas/user.schema';
 import { AuthService } from '../auth/auth.service';
 import { UsersService } from '../users/users.service';
+import { ClassSchema } from './schemas/class.schema';
 
 @Module({
   imports: [
     MongooseModule.forFeature([{ name: 'Praxis', schema: PraxisSchema }]),
+    MongooseModule.forFeature([{ name: 'Class', schema: ClassSchema }]),
     MongooseModule.forFeature([{ name: 'User', schema: UserSchema }]),
   ],
   controllers: [PraxisController],

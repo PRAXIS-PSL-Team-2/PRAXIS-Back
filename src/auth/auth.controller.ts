@@ -9,13 +9,12 @@ import { UsersService } from '../users/users.service';
 import { Inject } from '@nestjs/common';
 import { debug } from 'util';
 
-@ApiUseTags('auth')
+@ApiUseTags('login')
 @Controller('auth')
 export class AuthController {
     constructor(private readonly authService: AuthService,
                 private readonly usersService: UsersService) {}
-
-
+                
     @Post('login')
     @UseGuards(AuthGuard('local'))
     public async login(@Response() res, @Body() login: LoginUserDto){

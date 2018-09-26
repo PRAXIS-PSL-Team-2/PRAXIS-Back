@@ -1,12 +1,15 @@
 import { Injectable, HttpStatus, HttpException, Inject, forwardRef, OnModuleInit } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, PassportLocalModel } from 'mongoose';
-import { Praxis, Class } from './interfaces/praxis.interface';
+import { Praxis } from './interfaces/praxis.interface';
 import { CreatePraxisDto } from './dto/create-praxis.dto';
 import { StudentsService } from './../students/students.service';
 import { ModuleRef } from '@nestjs/core';
 import { UpdateAcceptedStudentsDto } from './dto/updateAcceptedStudents.dto';
 import { IUser } from '../users/interfaces/user.interface';
+import { CreateClassDto } from './dto/create-class.dto';
+import { Class } from './interfaces/class.interface';
+
 
 @Injectable()
 export class PraxisService implements OnModuleInit {
@@ -14,9 +17,9 @@ export class PraxisService implements OnModuleInit {
     private studentsService: StudentsService;
 
     constructor(
-        private readonly moduleRef: ModuleRef,
         @InjectModel('Praxis') private readonly praxisModel: Model<Praxis>,
-        @InjectModel('Praxis') private readonly classModel: Model<Class>,
+        @InjectModel('Class') private readonly classModel: Model<Class>,
+        private readonly moduleRef: ModuleRef,
     ) {}
 
     onModuleInit() {
@@ -30,6 +33,18 @@ export class PraxisService implements OnModuleInit {
             const error = new Error()
             error.message = String(e);
             return error;
+        }
+    }
+
+    async findById(praxisID :string): Promise<Praxis> {
+        try {
+            return await this.praxisModel.findById(praxisID).exec();
+        } catch (e) {
+            throw new HttpException({
+                status: false,
+                code: HttpStatus.CONFLICT,
+                error: String(e),
+            }, HttpStatus.CONFLICT);
         }
     }
 
@@ -229,6 +244,31 @@ export class PraxisService implements OnModuleInit {
         }
 
         return result;
+    }
+
+    async createClass( praxisId: string, createClassDto: CreateClassDto): Promise<Praxis | Error> {
+
+        const praxis = await this.findById(praxisId);
+
+        if (!praxis._id) {
+            throw new HttpException({
+                status: false,
+                code: HttpStatus.CONFLICT,
+                error: 'Praxis not found.',
+            }, HttpStatus.CONFLICT);
+        }
+
+        const newClass = new this.classModel(createClassDto);
+
+        const body = {$push: { schedule: newClass }}
+
+        try {
+            await this.update(praxisId, body);
+        } catch (e) {
+            const error = new Error()
+            error.message = String(e);
+            return error;
+        }
     }
 
 }

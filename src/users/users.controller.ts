@@ -21,7 +21,7 @@ export class UsersController {
 
         if( !createUserDto.password ||  !createUserDto.username ) {
                 return res.json({ status: false, code: HttpStatus.CONFLICT, message: 'Missing fields to complete registration.'});
-            }
+        }
         
         const user = await this.usersService.create(createUserDto);
 
