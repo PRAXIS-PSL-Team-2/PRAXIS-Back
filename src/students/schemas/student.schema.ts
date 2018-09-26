@@ -55,7 +55,7 @@ export const StudentSchema = new Schema(
                 },
                 grade: {
                     type: Number,
-                    default: null
+                    default: -1
                 }
             },
         ]

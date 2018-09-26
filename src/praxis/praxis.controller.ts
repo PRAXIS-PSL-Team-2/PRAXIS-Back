@@ -4,6 +4,7 @@ import { PraxisService } from './praxis.service';
 import { CreatePraxisDto } from './dto/create-praxis.dto';
 import { UpdateAcceptedStudentsDto } from './dto/updateAcceptedStudents.dto';
 import { CreateClassDto } from './dto/create-class.dto';
+import { StudentsAttendanceDto } from './dto/attendance.dto';
 
 @Controller('api/v1/praxis')
 export class PraxisController {
@@ -124,6 +125,21 @@ export class PraxisController {
     public async getClasses(@Response() res, @Param('praxisId') praxisId: string) {
 
         const praxis = await this.praxisService.getClasses(praxisId);
+
+        if (praxis instanceof Error){
+            return res.json({ status: false, code: HttpStatus.CONFLICT,  message: praxis.message});
+        } else {
+            return res.json({ status: true, code: HttpStatus.CREATED,  message: 'Classes.', object: praxis});
+        }
+        
+    }
+
+    @ApiUseTags('classes') 
+    @ApiOperation({ title: 'Take assistance for a specific class in a praxis.' })
+    @Post('/:praxisId/class/:classId/assistance')
+    public async takeAssistance(@Response() res, @Param('praxisId') praxisId: string, @Param('classId') classId: string, @Body() studentsAttendanceDto: StudentsAttendanceDto) {
+
+        const praxis = await this.praxisService.takeAssistance(praxisId, classId, studentsAttendanceDto);
 
         if (praxis instanceof Error){
             return res.json({ status: false, code: HttpStatus.CONFLICT,  message: praxis.message});

@@ -10,6 +10,7 @@ import { IUser } from '../users/interfaces/user.interface';
 import { CreateClassDto } from './dto/create-class.dto';
 import { Class } from './interfaces/class.interface';
 import * as mongoose from 'mongoose';
+import { StudentsAttendanceDto } from './dto/attendance.dto';
 
 @Injectable()
 export class PraxisService implements OnModuleInit {
@@ -17,6 +18,7 @@ export class PraxisService implements OnModuleInit {
     private studentsService: StudentsService;
 
     constructor(
+        @InjectModel('User') private readonly studentModel: PassportLocalModel<IUser>,
         @InjectModel('Praxis') private readonly praxisModel: Model<Praxis>,
         @InjectModel('Class') private readonly classModel: Model<Class>,
         private readonly moduleRef: ModuleRef,
@@ -332,6 +334,51 @@ export class PraxisService implements OnModuleInit {
 
     }
 
+    async takeAssistance(praxisId: string, classId: string, studentsAttendanceDto: StudentsAttendanceDto) {
+
+        const praxis = await this.praxisModel.findOne({
+            _id: praxisId,
+            schedule: {$elemMatch: { "_id": classId}}
+        });
+
+        if (praxis == null) {
+            throw new HttpException({
+                status: false,
+                code: HttpStatus.CONFLICT,
+                error: 'Praxis not found or class dont belong to that Praxis.',
+            }, HttpStatus.CONFLICT);
+        }
+        const attendedStudents = studentsAttendanceDto.attendedStudentsId;
+        const praxisStudents = praxis["students"]
+
+        console.log(attendedStudents);
+        console.log(praxisStudents);
+
+        praxisStudents.forEach(async student => {
+            const current = await this.studentModel.findOne({
+                _id: student,
+                "studentData.classes": {$elemMatch: { "_id": classId}}
+            })
+
+            console.log(student);
+
+            if (current == null){
+
+                const classData = {
+                    "class_id": classId,
+                    "attendance": attendedStudents.includes(String(student))
+                }
+                const body = {$addToSet: { "studentData.classes": classData }}
+
+                this.studentsService.update(student, body)
+            }
+
+        });
+
+        return praxis
+    }
+
 }
+
 
 
