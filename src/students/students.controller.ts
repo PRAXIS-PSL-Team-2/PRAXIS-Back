@@ -1,6 +1,6 @@
 
 import { RolesGuard } from './../auth/guards/roles.guard';
-import { Controller, Get, Response, HttpStatus, Post, Body, HttpException, Param, UseGuards } from '@nestjs/common';
+import { Controller, Get, Response, HttpStatus, Post, Body, HttpException, Param, UseGuards, Patch, Delete } from '@nestjs/common';
 import { ApiUseTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { StudentsService } from './students.service';
 import { CreateStudentDto } from './dto/create-student.dto';
@@ -44,6 +44,34 @@ export class StudentsController {
             return res.json({ status: false, code: HttpStatus.CONFLICT,  message: user.message});
         } else {
             return res.json({ status: true, code: HttpStatus.CREATED,  message: 'The student has been successfully created.'});
+        }
+    }
+
+    @ApiOperation({ title: 'Update a student'})
+    @ApiResponse({ status: 201, description: 'The user has been successfully updated.' })
+    @Patch('/:studentId')
+    public async updateStudent(@Response() res, @Param('studentId') id: String, @Body() createStudentDto: CreateStudentDto) {
+    
+        const user = await this.studentsService.update(id,createStudentDto);
+
+        if (user instanceof Error){
+            return res.json({ status: false, code: HttpStatus.CONFLICT,  message: user.message});
+        } else {
+            return res.json({ status: true, code: HttpStatus.CREATED,  message: 'The professor has been successfully updated.'});
+        }
+    }
+
+
+    @ApiOperation({ title: 'Delete an student passing his _id.'})
+    @Delete('/:studentId')
+    public async deleteUser( @Param('studentId') id: String, @Response() res) {
+
+        const user = await this.studentsService.delete(id);
+        
+        if (user instanceof Error){
+            return res.json({ status: false, code: HttpStatus.CONFLICT,  message: user.message});
+        } else {
+            return res.json({ status: true, code: HttpStatus.OK,  message: 'The professor has been successfully deleted.'});
         }
     }
 }

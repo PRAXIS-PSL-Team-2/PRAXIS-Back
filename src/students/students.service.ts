@@ -83,6 +83,28 @@ export class StudentsService {
 
     }
 
+    async delete(ID: String): Promise<boolean | Error> {
+        const user = await this.studentModel.findById(ID).exec();
+
+        if (!user._id) {
+            throw new HttpException({
+                status: false,
+                code: HttpStatus.FORBIDDEN,
+                error: 'User not found.',
+            }, 403);
+        }
+
+        try {
+            await this.studentModel.findByIdAndRemove(ID).exec();
+            return true;
+        } catch (e) {
+            const error = new Error()
+            error.message = String(e);
+            return error;
+        }
+
+    }
+
     async changeStatusToAccepted( studentId: String): Promise<Boolean | Error> {
 
         try {

@@ -44,28 +44,50 @@ export class ProfessorsService {
         }
     }
 
-    // async update(ID: String, newValue: any): Promise<IUser | Error> {
-    //     const user = await this.studentModel.findById(ID).exec();
+    async update(ID: String, newValue: any): Promise<IUser | Error> {
+        const user = await this.professorModel.findById(ID).exec();
 
-    //     if (!user._id) {
-    //         throw new HttpException({
-    //             status: false,
-    //             code: HttpStatus.FORBIDDEN,
-    //             error: 'User not found.',
-    //         }, 403);
-    //     }
+        if (!user._id) {
+            throw new HttpException({
+                status: false,
+                code: HttpStatus.FORBIDDEN,
+                error: 'User not found.',
+            }, 403);
+        }
 
-    //     try {
-    //         await this.studentModel.findByIdAndUpdate(ID, newValue).exec();
+        try {
+            await this.professorModel.findByIdAndUpdate(ID, newValue).exec();
 
-    //         return await this.studentModel.findById(ID).exec();
-    //     } catch (e) {
-    //         const error = new Error()
-    //         error.message = String(e);
-    //         return error;
-    //     }
+            return await this.professorModel.findById(ID).exec();
+        } catch (e) {
+            const error = new Error()
+            error.message = String(e);
+            return error;
+        }
 
-    // }
+    }
+
+    async delete(ID: String): Promise<boolean | Error> {
+        const user = await this.professorModel.findById(ID).exec();
+
+        if (!user._id) {
+            throw new HttpException({
+                status: false,
+                code: HttpStatus.FORBIDDEN,
+                error: 'User not found.',
+            }, 403);
+        }
+
+        try {
+            await this.professorModel.findByIdAndRemove(ID).exec();
+            return true;
+        } catch (e) {
+            const error = new Error()
+            error.message = String(e);
+            return error;
+        }
+
+    }
 
 
     // async checkIfUsernameExist( input: String): Promise<Boolean | Error> {
