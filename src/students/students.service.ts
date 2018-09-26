@@ -161,8 +161,8 @@ export class StudentsService {
                 foreignField: "_id",
                 as: "professor"
               }
-         },
-           {$project: {
+            },
+            {$project: {
                 classId: "$schedule._id",
                 topic: "$schedule.topic",
                 modality: "$schedule.modality",
@@ -188,7 +188,7 @@ export class StudentsService {
                         in: "$$student.studentData.classes"
                     }
                 }
-           }},
+            }},
          ])
 
         return classes

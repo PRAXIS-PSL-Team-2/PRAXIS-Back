@@ -9,7 +9,7 @@ import { UpdateAcceptedStudentsDto } from './dto/updateAcceptedStudents.dto';
 import { IUser } from '../users/interfaces/user.interface';
 import { CreateClassDto } from './dto/create-class.dto';
 import { Class } from './interfaces/class.interface';
-
+import * as mongoose from 'mongoose';
 
 @Injectable()
 export class PraxisService implements OnModuleInit {
@@ -279,13 +279,52 @@ export class PraxisService implements OnModuleInit {
         }
     }
 
-    async getClasses( praxisId: string ): Promise<Praxis | Error> {
+    async getClasses( praxisId: string ): Promise<any | Error> {
 
-        const praxis = await this.praxisModel.findOne({
-            _id: praxisId,
-        },'schedule -_id');
+        // const praxis = await this.praxisModel.findOne({
+        //     _id: praxisId,
+        // },'schedule -_id');
 
-        if (praxis == null) {
+        const praxis = mongoose.Types.ObjectId(praxisId)
+
+        const classes = this.praxisModel.aggregate([
+            {
+                $match: { "_id": praxis}
+            },
+            { $unwind: "$schedule" },
+           {
+            $lookup:
+              {
+                from: "users",
+                localField: "schedule.professor",
+                foreignField: "_id",
+                as: "professor"
+              }
+         },
+           {$project: {
+                classId: "$schedule._id",
+                topic: "$schedule.topic",
+                modality: "$schedule.modality",
+                date: "$schedule.date",
+                hour: "$schedule.hour",
+                professor: {
+                    $let : {
+                        vars: { "professor": { $arrayElemAt: [ "$professor", 0 ] } },
+                        in: {
+                            name: "$$professor.professorData.name",
+                            lastName: "$$professor.professorData.lastName",
+                            email: "$$professor.email",
+                            specialty: "$$professor.professorData.specialty",
+                            selfDescription: "$$professor.professorData.selfDescription",
+                        }
+                    }
+                },
+                resources: "$schedule.resources",
+           }
+        },
+         ])
+
+        if (classes == null) {
             throw new HttpException({
                 status: false,
                 code: HttpStatus.CONFLICT,
@@ -293,7 +332,7 @@ export class PraxisService implements OnModuleInit {
             }, HttpStatus.CONFLICT);
         }
 
-        return praxis['schedule']
+        return classes
 
     }
 
