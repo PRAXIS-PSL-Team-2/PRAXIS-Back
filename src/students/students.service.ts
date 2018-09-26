@@ -149,11 +149,48 @@ export class StudentsService {
                     let: {"classID": "$schedule._id"},
                     pipeline: [
                         { "$unwind": "$studentData.classes" },
-                        { "$match": { "$expr": { "$eq": [ "$studentData.classes.class_id", "$$classID" ] } } }
+                        { "$match": { "$expr": { "$eq": [ "$studentData.classes.class_id", "$$classID" ] } } },
+                        {"$project": { _id: 0, "studentData.classes": 1 }} 
                     ],
                     as: "data"
                 }
-           }
+           },
+           {
+            $lookup:
+              {
+                from: "users",
+                localField: "schedule.professor",
+                foreignField: "_id",
+                as: "professor"
+              }
+         },
+           {$project: {
+                classId: "$schedule._id",
+                topic: "$schedule.topic",
+                modality: "$schedule.modality",
+                date: "$schedule.date",
+                hour: "$schedule.hour",
+                professor: {
+                    $let : {
+                        vars: { "professor": { $arrayElemAt: [ "$professor", 0 ] } },
+                        in: {
+                            name: "$$professor.professorData.name",
+                            lastName: "$$professor.professorData.lastName",
+                            email: "$$professor.email",
+                            specialty: "$$professor.professorData.specialty",
+                            selfDescription: "$$professor.professorData.selfDescription",
+                        }
+                    }
+                },
+                resources: "$schedule.resources",
+                
+                studentData: {
+                    $let : {
+                        vars: { "student": { $arrayElemAt: [ "$data", 0 ] } },
+                        in: "$$student.studentData.classes"
+                    }
+                }
+           }},
          ])
 
         return classes

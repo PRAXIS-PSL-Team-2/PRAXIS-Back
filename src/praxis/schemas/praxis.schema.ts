@@ -30,6 +30,9 @@ export const PraxisSchema = new Schema(
         virtualSessionLink: {
             type: String
         },
+        surveyLink: {
+            type: String
+        },
         studentsCapacity: {
             type: Number
         },
