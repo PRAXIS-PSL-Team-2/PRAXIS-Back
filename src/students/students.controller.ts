@@ -91,7 +91,7 @@ export class StudentsController {
         }
     }
 
-    @ApiOperation({ title: 'Delete an student passing his _id.'})
+    @ApiOperation({ title: 'Get an student list of classes passing his _id.'})
     @Get('/:studentId/classes')
     public async getClasses( @Param('studentId') id: string, @Response() res) {
 

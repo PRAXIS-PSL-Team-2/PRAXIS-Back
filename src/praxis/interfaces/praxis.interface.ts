@@ -8,6 +8,7 @@ export interface Praxis extends Document {
     initialDate: Date;
     endDate: Date;
     virtualSessionLink: string;
+    surveyLink: string;
     studentsCapacity: number;
     classDays: string;
     classTimeRange: string;

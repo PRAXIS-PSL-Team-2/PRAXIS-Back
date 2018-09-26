@@ -24,6 +24,9 @@ export class CreatePraxisDto {
     readonly virtualSessionLink: string;
 
     @ApiModelProperty()
+    readonly surveyLink: string;
+
+    @ApiModelProperty()
     readonly studentsCapacity: number;
 
     @ApiModelProperty()

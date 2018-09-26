@@ -135,8 +135,6 @@ export class StudentsService {
     async getClasses( studentId : string ) {
         const student = await this.findById(studentId)
 
-        // const classes = this.praxisService.getClasses(student.studentData.praxisVersion)
-
         const classes = this.praxisModel.aggregate([
             {
                 $match: { _id: student.studentData.praxisVersion}
