@@ -11,6 +11,7 @@ import { CreateClassDto } from './dto/create-class.dto';
 import { Class } from './interfaces/class.interface';
 import * as mongoose from 'mongoose';
 import { StudentsAttendanceDto } from './dto/attendance.dto';
+import { StudentsGradesDto } from './dto/grades.dto';
 
 @Injectable()
 export class PraxisService implements OnModuleInit {
@@ -133,7 +134,7 @@ export class PraxisService implements OnModuleInit {
         
     }
 
-    async acceptStudentInPraxis(studentId: String, praxisId: String) {     
+    async acceptStudentInPraxis(studentId: string, praxisId: String) {     
         try {
             const result = await this.praxisModel.find({
                 _id: praxisId,
@@ -367,21 +368,55 @@ export class PraxisService implements OnModuleInit {
 
                 this.studentsService.update(student, body)
             } else{
+                await this.studentModel.updateOne({
+                    _id: student,
+                    "studentData.classes.class_id":  classId 
+                }, { $set: { "studentData.classes.$.attendance": attendedStudents.includes(String(student)) }})
+            }
 
-                console.log(attendedStudents.includes(String(student)));
+        });
 
-                console.log(
+        return praxis
+    }
 
-                    await this.studentModel.findOne({
-                        _id: student,
-                        studentData:  { classes:  {$elemMatch: {"class_id": classId }}}
-                    })
-                // await this.studentModel.updateOne({
-                //     _id: student,
-                //     "studentData.classes.class_id":  classId 
-                // }, { $set: { "studentData.classes.$.attendance": attendedStudents.includes(String(student)) }})
+    async putGrades(praxisId: string, classId: string,  studentsGradesDto: StudentsGradesDto) {
 
-                );
+        const praxis = await this.praxisModel.findOne({
+            _id: praxisId,
+            schedule: {$elemMatch: { "_id": classId}}
+        });
+
+        if (praxis == null) {
+            throw new HttpException({
+                status: false,
+                code: HttpStatus.CONFLICT,
+                error: 'Praxis not found or class dont belong to that Praxis.',
+            }, HttpStatus.CONFLICT);
+        }
+        const grades = studentsGradesDto.grades;
+
+
+        grades.forEach(async grade => {
+            const current = await this.studentModel.findOne({
+                _id: grade.student,
+                "studentData.classes.class_id": classId
+            })
+
+            if (current == null){
+
+                const classData = {
+                    "class_id": classId,
+                    "attendance": false,
+                    "grade": grade.grade
+                }
+                const body = {$addToSet: { "studentData.classes": classData }}
+
+                this.studentsService.update(grade.student, body)
+            } else{
+                await this.studentModel.updateOne({
+                    _id: grade.student,
+                    "studentData.classes.class_id":  classId 
+                }, { $set: { "studentData.classes.$.grade": grade.grade }})
             }
 
         });

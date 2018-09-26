@@ -103,4 +103,18 @@ export class StudentsController {
             return res.json({ status: true, code: HttpStatus.OK,  message: 'Classes', object: classes});
         }
     }
+
+    @ApiOperation({ title: 'Get a student list of classes passing his _id.'})
+    @Get('/accepted/:studentId')
+    public async changeStatusToAccepted( @Param('studentId') id: string, @Response() res) {
+
+        const classes = await this.studentsService.changeStatusToAccepted(id);
+        
+        if (classes instanceof Error){
+            return res.json({ status: false, code: HttpStatus.CONFLICT,  message: classes.message});
+        } else {
+            return res.json({ status: true, code: HttpStatus.OK,  message: 'Classes', object: classes});
+        }
+    }
+
 }

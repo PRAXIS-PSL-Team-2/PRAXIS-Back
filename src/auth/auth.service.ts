@@ -74,12 +74,19 @@ export class AuthService implements OnModuleInit {
             username: user.username,
             role: user.role }, AuthService.JWT_KEY, { expiresIn });
 
+        let status = ""
+
+        if(user.role == "student"){
+            status = user.studentData.status
+        }   
+
         return {
             accessToken,
             user: {
                 id: user._id,
                 role: user.role,
-                username: user.username
+                username: user.username,
+                status: status
             }
         };
     }

@@ -5,6 +5,7 @@ import { CreatePraxisDto } from './dto/create-praxis.dto';
 import { UpdateAcceptedStudentsDto } from './dto/updateAcceptedStudents.dto';
 import { CreateClassDto } from './dto/create-class.dto';
 import { StudentsAttendanceDto } from './dto/attendance.dto';
+import { StudentsGradesDto, StudentGradeDto } from './dto/grades.dto';
 
 @Controller('api/v1/praxis')
 export class PraxisController {
@@ -59,7 +60,7 @@ export class PraxisController {
     @ApiUseTags('praxis')
     @ApiOperation({ title: 'Accepts a student to praxis. Add a candidate student to the list of students of a praxis.' })
     @Get('/:praxisId/accept/:studentId')
-    public async acceptStudentInPraxis(@Response() res, @Param('studentId') studentId: String, @Param('praxisId') praxisId: String) {
+    public async acceptStudentInPraxis(@Response() res, @Param('studentId') studentId: string, @Param('praxisId') praxisId: String) {
         const praxis = await this.praxisService.acceptStudentInPraxis(studentId, praxisId);
         return res.json(praxis);
     }
@@ -140,6 +141,21 @@ export class PraxisController {
     public async takeAssistance(@Response() res, @Param('praxisId') praxisId: string, @Param('classId') classId: string, @Body() studentsAttendanceDto: StudentsAttendanceDto) {
 
         const praxis = await this.praxisService.takeAssistance(praxisId, classId, studentsAttendanceDto);
+
+        if (praxis instanceof Error){
+            return res.json({ status: false, code: HttpStatus.CONFLICT,  message: praxis.message});
+        } else {
+            return res.json({ status: true, code: HttpStatus.CREATED,  message: 'Classes.', object: praxis});
+        }
+        
+    }
+
+    @ApiUseTags('classes') 
+    @ApiOperation({ title: 'Take assistance for a specific class in a praxis.'})
+    @Post('/:praxisId/class/:classId/grades')
+    public async putGrades(@Response() res, @Param('praxisId') praxisId: string, @Param('classId') classId: string, @Body() studentsGradesDto: StudentsGradesDto) {
+
+        const praxis = await this.praxisService.putGrades(praxisId, classId, studentsGradesDto);
 
         if (praxis instanceof Error){
             return res.json({ status: false, code: HttpStatus.CONFLICT,  message: praxis.message});

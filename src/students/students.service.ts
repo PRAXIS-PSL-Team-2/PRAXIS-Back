@@ -2,6 +2,7 @@
 import { Injectable, Inject, forwardRef, HttpException, HttpStatus, Next } from '@nestjs/common';
 import { StudentData } from './interfaces/student.interface';
 import { Model, Types, Schema, PassportLocalModel } from 'mongoose';
+import * as mongoose from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { CreateStudentDto } from './dto/create-student.dto';
 import { PraxisService } from '../praxis/praxis.service';
@@ -118,16 +119,16 @@ export class StudentsService {
 
     }
 
-    async changeStatusToAccepted( studentId: String): Promise<Boolean | Error> {
+    async changeStatusToAccepted( studentId: string): Promise<Boolean | Error> {
 
         try {
-            await this.studentModel.update(studentId,{'studentData.status': 'accepted'}).exec();
+            await this.studentModel.findByIdAndUpdate(studentId,{'studentData.status': 'accepted'}).exec();
             return true;
 
         } catch (e) {
             const error = new Error()
             error.message = String(e);
-            return false;
+            return error;
         }
 
     }
