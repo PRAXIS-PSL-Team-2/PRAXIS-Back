@@ -8,6 +8,7 @@ import { RegistrationStatus } from './interfaces/registrationStatus.interface';
 import { UsersService } from '../users/users.service';
 import { Inject } from '@nestjs/common';
 import { debug } from 'util';
+import { Usr } from './user.decorator';
 
 @ApiUseTags('login')
 @Controller('auth')
@@ -35,11 +36,29 @@ export class AuthController {
     @Get('check/token')
     @ApiBearerAuth()
     @UseGuards(AuthGuard())
-    public async checkToken(@Response() res){
-        return res.json({
-            status: true,
-            code: HttpStatus.OK,
-            message: "Token available."
-        });
+    public async checkToken(@Response() res, @Usr() user){
+
+        if (user.role == 'student'){
+            return res.json({
+                status: true,
+                code: HttpStatus.OK,
+                message: "Token available.",
+                id: user._id,
+                username: user.username,
+                role: user.role,
+                studentStatus: user.studentData.status
+            });
+        } else {
+            return res.json({
+                status: true,
+                code: HttpStatus.OK,
+                message: "Token available.",
+                id: user._id,
+                username: user.username,
+                role: user.role,
+            });
+        }
+
+        
     }
 }
