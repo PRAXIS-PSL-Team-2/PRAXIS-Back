@@ -281,10 +281,6 @@ export class PraxisService implements OnModuleInit {
 
     async getClasses( praxisId: string ): Promise<any | Error> {
 
-        // const praxis = await this.praxisModel.findOne({
-        //     _id: praxisId,
-        // },'schedule -_id');
-
         const praxis = mongoose.Types.ObjectId(praxisId)
 
         const classes = this.praxisModel.aggregate([
