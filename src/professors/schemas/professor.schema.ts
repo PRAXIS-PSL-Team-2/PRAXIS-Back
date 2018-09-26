@@ -6,7 +6,20 @@ export const ProfessorSchema = new Schema(
             required: true,
             type: String
         },
+        lastName: {
+            required: true,
+            type: String
+        },
         email: {
+            required: true,
+            type: String,
+            unique: true
+        },
+        specialty: {
+            required: true,
+            type: String
+        },
+        selfDescription: {
             required: true,
             type: String
         },

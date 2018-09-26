@@ -1,4 +1,4 @@
-import { Module, forwardRef } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { StudentsController } from './students.controller';
 import { StudentsService } from './students.service';
 import { UserSchema } from '../users/schemas/user.schema';
@@ -17,6 +17,7 @@ import { PassportModule } from '@nestjs/passport';
     PassportModule.register({ defaultStrategy: 'jwt' })
   ],
   controllers: [StudentsController],
-  providers: [StudentsService, PraxisService, AuthService, UsersService]
+  providers: [StudentsService, PraxisService, AuthService, UsersService],
+  exports: [StudentsService]
 })
 export class StudentsModule {}

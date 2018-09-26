@@ -53,6 +53,7 @@ export const StudentSchema = new Schema(
             {
                 class_id: {
                     type: Schema.Types.ObjectId,
+                    ref: "User",
                     required: true
                 },
                 attendance: {

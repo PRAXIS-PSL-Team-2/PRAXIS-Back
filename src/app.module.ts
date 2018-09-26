@@ -11,9 +11,10 @@ import { PraxisModule } from './praxis/praxis.module';
 import { AuthModule } from './auth/auth.module';
 import { APP_FILTER } from '@nestjs/core';
 import { HttpExceptionFilter } from './shared/filters/http-exception.filter';
+import { ProfessorsModule } from './professors/professors.module';
 
 @Module({
-  imports: [ MongooseModule.forRoot('mongodb://admin:admin123@ds159772.mlab.com:59772/praxisdb', { useNewUrlParser: true }), SharedModule, UsersModule, StudentsModule, PraxisModule, AuthModule],
+  imports: [ MongooseModule.forRoot('mongodb://admin:admin123@ds159772.mlab.com:59772/praxisdb', { useNewUrlParser: true }), SharedModule, AuthModule, UsersModule, StudentsModule, ProfessorsModule, PraxisModule],
   controllers: [AppController],
   providers: [
     AppService,

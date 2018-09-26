@@ -5,7 +5,7 @@ export interface IUsersService {
     findById(ID: number): Promise<IUser | null>;
     findByUsername(username: string): Promise<IUser | null>;
     findOne(options: object): Promise<IUser | null>;
-    create(user: IUser): Promise<IUser>;
+    create(user: IUser): Promise<any | Error>;
     update(ID: number, newValue: IUser): Promise<IUser | null>;
     delete(ID: number): Promise<string>;
 }

@@ -12,7 +12,7 @@ import { Roles } from '../auth/guards/roles.decorator';
 export class StudentsController {
     constructor(private readonly studentsService: StudentsService){}
 
-    // @ApiOperation({ title: 'Get all users', description: "Return a json with all the users" })
+    @ApiOperation({ title: 'Get all students'})
     @Get()
     // @ApiBearerAuth()
     // @UseGuards(AuthGuard(), RolesGuard)
@@ -28,29 +28,7 @@ export class StudentsController {
         
     }
 
-    @Get('/username/disponibility/:username')
-    public async checkIfUsernameExist(@Response() res, @Param('username') username: String) {
-        const users = await this.studentsService.checkIfUsernameExist(username);
-
-        if (users instanceof Error){
-            return res.json({ status: false, code: HttpStatus.CONFLICT,  message: users.message});
-        } else {
-            return res.json(users);
-        }
-    }
-
-    @Get('/email/disponibility/:email')
-    public async checkIfEmailExist(@Response() res, @Param('email') email: String) {
-        const users = await this.studentsService.checkIfEmailExist(email);
-
-        if (users instanceof Error){
-            return res.json({ status: false, code: HttpStatus.CONFLICT,  message: users.message});
-        } else {
-            return res.json(users);
-        }
-    }
-
-    // @ApiOperation({ title: 'Create an user', description: "Create an user passing a object of type CreateUserDto. Return the object created" })
+    @ApiOperation({ title: 'Create a student'})
     @ApiResponse({ status: 201, description: 'The user has been successfully created.' })
     @Post()
     public async createStudent(@Response() res, @Body() createStudentDto: CreateStudentDto) {

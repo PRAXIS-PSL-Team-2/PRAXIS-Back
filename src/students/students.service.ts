@@ -24,7 +24,7 @@ export class StudentsService {
 
     async findAll(): Promise<IUser[] | Error> {
         try {
-            return await this.studentModel.find().exec();
+            return await this.studentModel.find({role: 'student'}).exec();
         } catch (e) {
             const error = new Error()
             error.message = String(e);
@@ -86,38 +86,13 @@ export class StudentsService {
     async changeStatusToAccepted( studentId: String): Promise<Boolean | Error> {
 
         try {
-            await this.studentModel.update(studentId,{status: 'accepted'}).exec();
+            await this.studentModel.update(studentId,{'studentData.status': 'accepted'}).exec();
             return true;
 
         } catch (e) {
             const error = new Error()
             error.message = String(e);
             return false;
-        }
-
-    }
-
-    async checkIfUsernameExist( input: String): Promise<Boolean | Error> {
-
-        try {
-            const result = await this.studentModel.find({username: input}).exec();
-            return (result.length == 0);
-        } catch (e) {
-            const error = new Error()
-            error.message = String(e);
-            return error;
-        }
-    }
-
-    async checkIfEmailExist( input: String): Promise<Boolean | Error> {
-
-        try {
-            const result = await this.studentModel.find({"studentData.email" : input}).exec();
-            return (result.length == 0);
-        } catch (e) {
-            const error = new Error()
-            error.message = String(e);
-            return error;
         }
 
     }
