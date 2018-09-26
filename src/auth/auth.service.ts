@@ -78,7 +78,8 @@ export class AuthService implements OnModuleInit {
             accessToken,
             user: {
                 id: user._id,
-                role: user.role
+                role: user.role,
+                username: user.username
             }
         };
     }

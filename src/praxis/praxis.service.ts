@@ -148,7 +148,7 @@ export class PraxisService implements OnModuleInit {
                 };
             }
     
-            this.studentsService.changeStatusToAccepted(studentId);
+            await this.studentsService.changeStatusToAccepted(studentId);
     
             const body = {$addToSet: { students: studentId }};
     
@@ -351,16 +351,11 @@ export class PraxisService implements OnModuleInit {
         const attendedStudents = studentsAttendanceDto.attendedStudentsId;
         const praxisStudents = praxis["students"]
 
-        console.log(attendedStudents);
-        console.log(praxisStudents);
-
         praxisStudents.forEach(async student => {
             const current = await this.studentModel.findOne({
                 _id: student,
-                "studentData.classes": {$elemMatch: { "_id": classId}}
+                "studentData.classes.class_id": classId
             })
-
-            console.log(student);
 
             if (current == null){
 
@@ -371,6 +366,22 @@ export class PraxisService implements OnModuleInit {
                 const body = {$addToSet: { "studentData.classes": classData }}
 
                 this.studentsService.update(student, body)
+            } else{
+
+                console.log(attendedStudents.includes(String(student)));
+
+                console.log(
+
+                    await this.studentModel.findOne({
+                        _id: student,
+                        studentData:  { classes:  {$elemMatch: {"class_id": classId }}}
+                    })
+                // await this.studentModel.updateOne({
+                //     _id: student,
+                //     "studentData.classes.class_id":  classId 
+                // }, { $set: { "studentData.classes.$.attendance": attendedStudents.includes(String(student)) }})
+
+                );
             }
 
         });
