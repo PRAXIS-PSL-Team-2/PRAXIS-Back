@@ -28,6 +28,16 @@ export class ProfessorsService {
         }
     }
 
+    async findById(id: String): Promise<IUser | Error> {
+        try {
+            return await this.professorModel.findById(id).exec();
+        } catch (e) {
+            const error = new Error()
+            error.message = String(e);
+            return error;
+        }
+    }
+
     async create( createProfessorDto: CreateProfessorDto): Promise<any | Error> {
 
         try {

@@ -24,6 +24,22 @@ export class ProfessorsController {
         
     }
 
+    @ApiOperation({ title: 'Get one Professor.'})
+    @Get('/:professorId')
+    // @ApiBearerAuth()
+    // @UseGuards(AuthGuard())
+    // @Roles('student')
+    public async getProfessor(@Response() res, @Param('professorId') id: String) {
+        const users = await this.professorsService.findById(id);
+
+        if (users instanceof Error){
+            return res.json({ status: false, code: HttpStatus.CONFLICT,  message: users.message});
+        } else {
+            return res.json({ status: true, code: HttpStatus.CREATED,  message: 'Professor.', object: users});
+        }
+        
+    }
+
     @ApiOperation({ title: 'Create a professor'})
     @ApiResponse({ status: 201, description: 'The user has been successfully created.' })
     @Post()

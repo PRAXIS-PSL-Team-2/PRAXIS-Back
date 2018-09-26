@@ -32,6 +32,16 @@ export class StudentsService {
         }
     }
 
+    async findById(id: String): Promise<IUser | Error> {
+        try {
+            return await this.studentModel.findById(id).exec();
+        } catch (e) {
+            const error = new Error()
+            error.message = String(e);
+            return error;
+        }
+    }
+
     async create( createStudentDto: CreateStudentDto): Promise<any | Error> {
 
         try {

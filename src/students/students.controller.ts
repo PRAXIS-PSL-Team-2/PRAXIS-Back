@@ -28,6 +28,22 @@ export class StudentsController {
         
     }
 
+    @ApiOperation({ title: 'Get one student.'})
+    @Get('/:studentId')
+    // @ApiBearerAuth()
+    // @UseGuards(AuthGuard())
+    // @Roles('student')
+    public async getStudent(@Response() res, @Param('studentId') id: String) {
+        const users = await this.studentsService.findById(id);
+
+        if (users instanceof Error){
+            return res.json({ status: false, code: HttpStatus.CONFLICT,  message: users.message});
+        } else {
+            return res.json({ status: true, code: HttpStatus.CREATED,  message: 'Student.', object: users});
+        }
+        
+    }
+
     @ApiOperation({ title: 'Create a student'})
     @ApiResponse({ status: 201, description: 'The user has been successfully created.' })
     @Post()
