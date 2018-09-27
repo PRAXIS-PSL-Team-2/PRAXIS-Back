@@ -151,7 +151,7 @@ export class PraxisController {
     }
 
     @ApiUseTags('classes') 
-    @ApiOperation({ title: 'Take assistance for a specific class in a praxis.'})
+    @ApiOperation({ title: 'Update grades for a specific class in a praxis.'})
     @Post('/:praxisId/class/:classId/grades')
     public async putGrades(@Response() res, @Param('praxisId') praxisId: string, @Param('classId') classId: string, @Body() studentsGradesDto: StudentsGradesDto) {
 
