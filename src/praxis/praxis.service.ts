@@ -310,6 +310,8 @@ export class PraxisService implements OnModuleInit {
                     $let : {
                         vars: { "professor": { $arrayElemAt: [ "$professor", 0 ] } },
                         in: {
+                            id: "$$professor._id",
+                            username: "$$professor.username",
                             name: "$$professor.professorData.name",
                             lastName: "$$professor.professorData.lastName",
                             email: "$$professor.email",
