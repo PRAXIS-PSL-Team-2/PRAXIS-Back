@@ -82,10 +82,9 @@ export class UsersService implements IUsersService {
     async checkIfEmailExist( input: String): Promise<Boolean | Error> {
 
         try {
-            const result = await this.userModel.find({"studentData.email" : input}).exec();
-            const result2 = await this.userModel.find({"professorData.email" : input}).exec();
+            const result = await this.userModel.find({"email" : input}).exec();
 
-            return ( (result.length == 0) && (result2.length == 0) );
+            return ( (result.length == 0) );
         } catch (e) {
             const error = new Error()
             error.message = String(e);
