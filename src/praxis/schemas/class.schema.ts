@@ -22,6 +22,24 @@ export const ClassSchema = new Schema(
             type: Schema.Types.ObjectId,
             ref: "User" 
         },
+        description: {
+            type: String,
+        },
+        homework: {
+            type: String,
+            default: "To define"
+        },
+        homeworks: [
+            {
+                students: {
+                    type: Schema.Types.ObjectId,
+                    ref: "User" 
+                },
+                homework: {
+                    type: String
+                }
+            }
+        ],
         resources: [
             {
                 type: {
