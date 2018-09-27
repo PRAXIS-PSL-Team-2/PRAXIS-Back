@@ -15,7 +15,6 @@ export const ProfessorSchema = new Schema(
             type: String
         },
         selfDescription: {
-            required: true,
             type: String
         },
     }, 
