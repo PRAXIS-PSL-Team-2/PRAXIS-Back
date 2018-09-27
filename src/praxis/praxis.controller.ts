@@ -27,19 +27,19 @@ export class PraxisController {
         
     }
 
-    // @ApiUseTags('praxis')
-    // @ApiOperation({ title: 'Get Praxis given the id.'})
-    // @Get('/:idPraxis')
-    // public async getIdPraxis(@Response() res,  @Param('idPraxis') idPraxis: string) {
-    //     const praxis = await this.praxisService.findById(idPraxis);
+    @ApiUseTags('praxis')
+    @ApiOperation({ title: 'Get Praxis given the id.'})
+    @Get('/:idPraxis')
+    public async getIdPraxis(@Response() res,  @Param('idPraxis') idPraxis: string) {
+        const praxis = await this.praxisService.findById(idPraxis);
 
-    //     if (praxis instanceof Error){
-    //         return res.json({ status: false, code: HttpStatus.CONFLICT,  message: praxis.message});
-    //     } else {
-    //         return res.json({ status: true, code: HttpStatus.CREATED,  message: 'Praxis.', object: praxis});
-    //     }
+        if (praxis instanceof Error){
+            return res.json({ status: false, code: HttpStatus.CONFLICT,  message: praxis.message});
+        } else {
+            return res.json({ status: true, code: HttpStatus.CREATED,  message: 'Praxis.', object: praxis});
+        }
         
-    // }
+    }
     
     @ApiUseTags('praxis')
     @ApiOperation({ title: 'Create a Praxis version.', description: "Date format: MM/DD/YY" })
