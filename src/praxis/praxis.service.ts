@@ -12,6 +12,8 @@ import { Class } from './interfaces/class.interface';
 import * as mongoose from 'mongoose';
 import { StudentsAttendanceDto } from './dto/attendance.dto';
 import { StudentsGradesDto } from './dto/grades.dto';
+import { UpdateClassDto } from './dto/updateClass.dto';
+import { HomeworkDto } from './dto/homework.dto';
 
 @Injectable()
 export class PraxisService implements OnModuleInit {
@@ -306,6 +308,7 @@ export class PraxisService implements OnModuleInit {
                 modality: "$schedule.modality",
                 date: "$schedule.date",
                 hour: "$schedule.hour",
+                homework: "$schedule.homework",
                 professor: {
                     $let : {
                         vars: { "professor": { $arrayElemAt: [ "$professor", 0 ] } },
@@ -321,6 +324,7 @@ export class PraxisService implements OnModuleInit {
                     }
                 },
                 resources: "$schedule.resources",
+                homeworks: "$schedule.homeworks",
            }
         },
          ])
@@ -424,6 +428,150 @@ export class PraxisService implements OnModuleInit {
         });
 
         return praxis
+    }
+
+    async updateClass(praxisId: string, classId: string,  updateClassDto: UpdateClassDto) {
+
+        const praxis = await this.praxisModel.findOne({
+            _id: praxisId,
+            schedule: {$elemMatch: { "_id": classId}}
+        });
+
+        if (praxis == null) {
+            throw new HttpException({
+                status: false,
+                code: HttpStatus.CONFLICT,
+                error: 'Praxis not found or class dont belong to that Praxis.',
+            }, HttpStatus.CONFLICT);
+        }
+
+        const homework = updateClassDto.homework;
+        const description = updateClassDto.description;
+        const resource = updateClassDto.resource;
+
+        if(homework != null) {
+            await this.praxisModel.updateOne({
+                _id: praxisId,
+                "schedule._id":  classId 
+            }, { $set: { "schedule.$.homework": homework }})
+        }
+
+        if(description != null) {
+            await this.praxisModel.updateOne({
+                _id: praxisId,
+                "schedule._id":  classId 
+            }, { $set: { "schedule.$.description": description }})
+        }
+
+        if(resource != null) {
+            await this.praxisModel.updateOne({
+                _id: praxisId,
+                "schedule._id":  classId 
+            }, { $addToSet: { "schedule.$.resources": resource }})
+        }
+
+        return praxis
+    }
+
+    
+    async uploadHomework(praxisId: string, classId: string, studentId: string,  homeworkDto: HomeworkDto) {
+
+        const praxis = await this.praxisModel.findOne({
+            _id: praxisId,
+            schedule: {$elemMatch: { "_id": classId}}
+        });
+
+        if (praxis == null) {
+            throw new HttpException({
+                status: false,
+                code: HttpStatus.CONFLICT,
+                error: 'Praxis not found or class dont belong to that Praxis.',
+            }, HttpStatus.CONFLICT);
+        }
+
+        const homework = {
+            student: studentId,
+            homework: homeworkDto.homework,
+            type: homeworkDto.type
+        }
+
+
+
+        await this.praxisModel.updateOne({
+            _id: praxisId,
+            "schedule._id":  classId 
+        }, { $addToSet: { "schedule.$.homeworks": homework }})
+    
+
+        return praxis
+    }
+
+    async getHomeworks(praxisId: string, classId: string) {
+
+        const praxis = await this.praxisModel.findOne({
+            _id: praxisId,
+            schedule: {$elemMatch: { "_id": classId}}
+        });
+
+        if (praxis == null) {
+            throw new HttpException({
+                status: false,
+                code: HttpStatus.CONFLICT,
+                error: 'Praxis not found or class dont belong to that Praxis.',
+            }, HttpStatus.CONFLICT);
+        }
+
+        const praxId = mongoose.Types.ObjectId(praxisId)
+        const clsId = mongoose.Types.ObjectId(classId)
+
+        const homeworks = this.praxisModel.aggregate([
+            {
+                $match: { "_id": praxId}
+            },
+            { $unwind: "$schedule" },
+            {
+                $match: { "schedule._id": clsId}
+            },
+            { $unwind: "$schedule.homeworks" },
+           {
+            $lookup:
+              {
+                from: "users",
+                localField: "schedule.homeworks.student",
+                foreignField: "_id",
+                as: "student"
+              }
+         },
+           {$project: {
+                homework: "$schedule.homeworks.homework",
+                type: "$schedule.homeworks.type",
+                student: {
+                    $let : {
+                        vars: { "student": { $arrayElemAt: [ "$student", 0 ] } },
+                        in: {
+                            id: "$$student._id",
+                            username: "$$student.username",
+                            name: "$$student.studentData.name",
+                            lastName: "$$student.studentData.lastName",
+                            email: "$$student.email",
+                        }
+                    }
+                },
+           }
+        },
+         ])
+
+        if (homeworks == null) {
+            throw new HttpException({
+                status: false,
+                code: HttpStatus.CONFLICT,
+                error: 'Praxis not found.',
+            }, HttpStatus.CONFLICT);
+        }
+
+        
+
+        return homeworks
     }
 
 }

@@ -31,13 +31,18 @@ export const ClassSchema = new Schema(
         },
         homeworks: [
             {
-                students: {
+                student: {
                     type: Schema.Types.ObjectId,
                     ref: "User" 
                 },
                 homework: {
                     type: String
-                }
+                },
+                type: {
+                    type: String,
+                    required: true,
+                    enum: ['file', 'link']
+                },
             }
         ],
         resources: [

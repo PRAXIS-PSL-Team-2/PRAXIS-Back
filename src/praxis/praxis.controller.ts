@@ -6,6 +6,8 @@ import { UpdateAcceptedStudentsDto } from './dto/updateAcceptedStudents.dto';
 import { CreateClassDto } from './dto/create-class.dto';
 import { StudentsAttendanceDto } from './dto/attendance.dto';
 import { StudentsGradesDto, StudentGradeDto } from './dto/grades.dto';
+import { UpdateClassDto } from './dto/updateClass.dto';
+import { HomeworkDto } from './dto/homework.dto';
 
 @Controller('api/v1/praxis')
 export class PraxisController {
@@ -175,6 +177,52 @@ export class PraxisController {
             return res.json({ status: false, code: HttpStatus.CONFLICT,  message: praxis.message});
         } else {
             return res.json({ status: true, code: HttpStatus.CREATED,  message: 'Classes.', object: praxis});
+        }
+        
+    }
+
+
+    @ApiUseTags('classes') 
+    @ApiOperation({ title: 'Update some attr for a class.'})
+    @Post('/:praxisId/class/:classId')
+    public async updateClass(@Response() res, @Param('praxisId') praxisId: string, @Param('classId') classId: string, @Body() updateClassDto: UpdateClassDto) {
+
+        const praxis = await this.praxisService.updateClass(praxisId, classId, updateClassDto);
+
+        if (praxis instanceof Error){
+            return res.json({ status: false, code: HttpStatus.CONFLICT,  message: praxis.message});
+        } else {
+            return res.json({ status: true, code: HttpStatus.CREATED,  message: 'Classes.', object: praxis});
+        }
+        
+    }
+
+    @ApiUseTags('classes') 
+    @ApiOperation({ title: 'Upload a homework for a class.'})
+    @Post('/:praxisId/class/:classId/homework/:studentId')
+    public async uploadHomework(@Response() res, @Param('praxisId') praxisId: string, @Param('classId') classId: string, @Param('studentId') studentId: string, @Body() homeworkDto: HomeworkDto) {
+
+        const praxis = await this.praxisService.uploadHomework(praxisId, classId, studentId, homeworkDto);
+
+        if (praxis instanceof Error){
+            return res.json({ status: false, code: HttpStatus.CONFLICT,  message: praxis.message});
+        } else {
+            return res.json({ status: true, code: HttpStatus.CREATED,  message: 'Classes.', object: praxis});
+        }
+        
+    }
+
+    @ApiUseTags('classes') 
+    @ApiOperation({ title: 'Get all homeworks for a class.'})
+    @Get('/:praxisId/class/:classId/homeworks')
+    public async getHomeworks(@Response() res, @Param('praxisId') praxisId: string, @Param('classId') classId: string) {
+
+        const praxis = await this.praxisService.getHomeworks(praxisId, classId);
+
+        if (praxis instanceof Error){
+            return res.json({ status: false, code: HttpStatus.CONFLICT,  message: praxis.message});
+        } else {
+            return res.json({ status: true, code: HttpStatus.CREATED,  message: 'Homeworks.', object: praxis});
         }
         
     }

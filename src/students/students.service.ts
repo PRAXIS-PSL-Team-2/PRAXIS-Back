@@ -182,7 +182,8 @@ export class StudentsService {
                     }
                 },
                 resources: "$schedule.resources",
-                
+                homework: "$schedule.homework",
+                homeworks: "$schedule.homeworks",
                 studentData: {
                     $let : {
                         vars: { "student": { $arrayElemAt: [ "$data", 0 ] } },
