@@ -28,6 +28,14 @@ export class PraxisController {
     }
 
     @ApiUseTags('praxis')
+    @ApiOperation({ title: 'Return an array of universities with open calls for praxis.' })
+    @Get('/universities')
+    public async getAvailablePraxis(@Response() res) {
+        const praxis = await this.praxisService.getAvailablePraxis();
+        return res.json(praxis);
+    }
+
+    @ApiUseTags('praxis')
     @ApiOperation({ title: 'Get Praxis given the id.'})
     @Get('/:idPraxis')
     public async getIdPraxis(@Response() res,  @Param('idPraxis') idPraxis: string) {
@@ -57,13 +65,6 @@ export class PraxisController {
         
     }
 
-    @ApiUseTags('praxis')
-    @ApiOperation({ title: 'Return an array of universities with open calls for praxis.' })
-    @Get('/universities')
-    public async getAvailablePraxis(@Response() res) {
-        const praxis = await this.praxisService.getAvailablePraxis();
-        return res.json(praxis);
-    }
 
     @ApiUseTags('praxis')
     @ApiOperation({ title: 'Return the Praxis id given the name of a university as long as there is an open call for that university.' })
